@@ -1,0 +1,42 @@
+[
+  {
+    "type": "all",
+    "title": "Total de Emissões ( últimos 6 meses )",
+    "values": [123, 45, 67, 55, 41, 23],
+    "labels": ["Dezembro", "Janeiro", "Fevereiro", "Março", "Abril", "Maio"],
+    "tooltipInfo": [
+      "orçamentos emitidos.",
+      "das emissões em 6 meses."
+    ]
+  },
+  {
+    "type": "canceled",
+    "title": "Cancelados",
+    "values": [25, 15, 10, 3, 12, 9],
+    "labels": ["Dezembro", "Janeiro", "Fevereiro", "Março", "Abril", "Maio"],
+    "tooltipInfo": [
+      "orçamentos Cancelados.",
+      "dos cancelados em 6 meses."
+    ]
+  },
+  {
+    "type": "await",
+    "title": "Aguardando",
+    "values": [123, 45, 98, 234, 67, 23],
+    "labels": ["Dezembro", "Janeiro", "Fevereiro", "Março", "Abril", "Maio"],
+    "tooltipInfo": [
+      "orçamentos aguardando aprovação.",
+      "dos aguardados em 6 meses."
+    ]
+  },
+  {
+    "type": "success",
+    "title": "Aprovados",
+    "values": [23, 12, 9, 14, 22, 3],
+    "labels": ["Dezembro", "Janeiro", "Fevereiro", "Março", "Abril", "Maio"],
+    "tooltipInfo": [
+      "orçamentos aprovados.",
+      "dos aprovados em 6 meses."
+    ]
+  }
+]

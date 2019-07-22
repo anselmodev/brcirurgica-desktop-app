@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <title>AD Studios - My Electron App</title>
+    <style>
+      body {
+        border: 0;
+        margin: 0;
+        padding: 0;
+      }
+      .splash-container {
+        width: 250px;
+        height: 268px;
+        background: url(splash-screen.jpg) no-repeat;
+      }
+
+      .preloader-splash {
+        width: 250px;
+        height: 24px;
+        position: absolute;
+        top: 160px;
+        left: 0;
+        text-align: center;
+        animation-name: splash-fade;
+        animation-duration: 0.5s;
+        animation-delay: 1s;
+        animation-fill-mode: forwards;
+      }
+      @keyframes splash-fade {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="splash-container">
+      <p class="preloader-splash">
+        <img src="preloader.gif" />
+      </p>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,116 @@
+{
+  "name": "electron-react-typescript",
+  "description": "Electron Application With React and Typescript",
+  "version": "0.1.0",
+  "private": true,
+  "main": "public/electron.js",
+  "homepage": "./",
+  "author": {
+    "name": "AD Studio ( Anselmo Dev Studio )",
+    "email": "anselmo.dev@gmail.com",
+    "url": "https://anselmodev.com"
+  },
+  "dependencies": {
+    "@types/bcrypt": "^3.0.0",
+    "@types/crypto-js": "^3.1.43",
+    "@types/drivelist": "^6.4.1",
+    "@types/gsap": "^1.20.2",
+    "@types/jest": "24.0.15",
+    "@types/moment-timezone": "^0.5.12",
+    "@types/mousetrap": "^1.6.3",
+    "@types/mysql": "^2.15.6",
+    "@types/node": "12.6.1",
+    "@types/qs": "^6.5.3",
+    "@types/react": "16.8.23",
+    "@types/react-dom": "16.8.4",
+    "@types/react-redux": "^7.1.1",
+    "@types/react-router-dom": "^4.3.4",
+    "@types/redux-logger": "^3.0.7",
+    "@types/styled-components": "^4.1.16",
+    "@types/vanilla-masker": "^1.2.0",
+    "apexcharts": "^3.8.3",
+    "bcrypt": "^3.0.6",
+    "concurrently": "^4.1.0",
+    "crypto-js": "^3.1.9-1",
+    "drivelist": "^8.0.6",
+    "electron-is-dev": "^1.1.0",
+    "gsap": "^2.1.3",
+    "moment": "^2.24.0",
+    "moment-timezone": "^0.5.25",
+    "mousetrap": "^1.6.3",
+    "mysql": "^2.17.1",
+    "qs": "^6.7.0",
+    "react": "^16.8.6",
+    "react-currency-format": "^1.0.0",
+    "react-dom": "^16.8.6",
+    "react-redux": "^7.1.0-rc.1",
+    "react-router-dom": "^5.0.0",
+    "react-scripts": "3.0.1",
+    "react-svg": "^10.0.2",
+    "redux": "^4.0.1",
+    "redux-thunk": "^2.3.0",
+    "rsuite": "^3.8.4",
+    "styled-components": "^4.2.0",
+    "typescript": "3.5.3",
+    "vanilla-masker": "^1.2.0"
+  },
+  "devDependencies": {
+    "concurrently": "^4.1.0",
+    "electron": "^5.0.1",
+    "electron-builder": "^20.40.2",
+    "electron-devtools-installer": "^2.2.4",
+    "redux-logger": "^3.0.6",
+    "use-reducer-logger": "^1.0.0",
+    "wait-on": "^3.2.0"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "dev-server": "BROWSER=none yarn start",
+    "dev-app": "electron .",
+    "postinstall": "electron-builder install-app-deps",
+    "electron-pack-all": "build -mwl",
+    "electron-pack-win": "build --win",
+    "electron-pack-mac": "build --macos",
+    "electron-pack-lnx": "build --linux"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "build": {
+    "appId": "com.electron.react",
+    "productName": "Electron React App",
+    "copyright": "Copyright © 2019 ${author}",
+    "mac": {
+      "icon": "resources/icon.icns",
+      "category": "public.app-category.utilities"
+    },
+    "win": {
+      "icon": "resources/icon.ico",
+      "target": "NSIS"
+    },
+    "files": [
+      "build/**/*",
+      "electron-core/**/*",
+      "node_modules/**/*"
+    ],
+    "directories": {
+      "buildResources": "resources",
+      "output": "release"
+    }
+  }
+}
