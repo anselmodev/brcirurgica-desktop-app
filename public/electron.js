@@ -41,7 +41,7 @@ function createSplash() {
 function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1270,
-    height: 720,
+    height: 800,
     center: true,
     show: false,
     // frame: false,

@@ -5,7 +5,7 @@
 </p>
 <br />
 
-<h3>AD Studios - Electron and React with Typescript Boilerplate</a></h3>
+<h3>AD Studios - Sistema de Orçamentos BR Cirúrgica</a></h3>
 
 <br />
 <hr />
@@ -16,7 +16,7 @@
 First, clone the repo via git:
 
 ```bash
-git clone --depth 1 --single-branch --branch master https://github.com/anselmodev/ads-electron-react-boilerplate.git your-project-name
+git clone --depth 1 --single-branch --branch master https://github.com/anselmodev/brcirurgica-desktop-app.git your-project-name
 ```
 
 And then install the dependencies with yarn.

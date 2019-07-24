@@ -27,7 +27,7 @@ interface PropsTooltip {
 
 const _tooltip = (props: HTMLElement | string) => <Tooltip> {props} </Tooltip>;
 
-export default (props: PropsTooltip) => {
+export const ToolTip = (props: PropsTooltip) => {
   return (
     <Whisper
       placement={props.placement}

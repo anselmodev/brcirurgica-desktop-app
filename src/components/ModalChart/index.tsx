@@ -5,7 +5,7 @@ import { IconButton, Icon, Loader } from "rsuite";
 import { ModalChartContainer, BoxChart } from "./styles";
 import { chartAction } from "../../_core/redux/actions";
 import { getElementPosition, getElementDimensions } from "../../_core/helpers";
-import Tooltip from "../ToolTip";
+import { ToolTip } from "../ToolTip";
 import  { BarsChartContainer } from './BarsInfo';
 import chartsDataDB from "../../mockData/chart.json";
 
@@ -16,7 +16,7 @@ interface PropsAnimationChart {
 }
 
 const animationChartHandler = (props: PropsAnimationChart) => {
-  const getPos = getElementPosition(props.element, true);
+  const getPos = getElementPosition(props.element);
   const getDim = getElementDimensions(props.element);
 
   if (props.open) {
@@ -110,7 +110,7 @@ export const ModalChart = () => {
     <ModalChartContainer>
       <BoxChart color={chartStore.type} className="box-chart">
         {/* reload button */}
-        <Tooltip placement="bottom" trigger="hover" content="Atualizar">
+        <ToolTip placement="bottom" trigger="hover" content="Atualizar">
           <div className="btn-close-charts reload-ch">
             <IconButton
               icon={<Icon icon="refresh" />}
@@ -122,9 +122,9 @@ export const ModalChart = () => {
               }}
             />
           </div>
-        </Tooltip>
+        </ToolTip>
         {/* Close button */}
-        <Tooltip placement="bottom" trigger="hover" content="Fechar">
+        <ToolTip placement="bottom" trigger="hover" content="Fechar">
           <div className="btn-close-charts">
             <IconButton
               icon={<Icon icon="close" />}
@@ -136,7 +136,7 @@ export const ModalChart = () => {
               }}
             />
           </div>
-        </Tooltip>
+        </ToolTip>
         <h3>{chartInfo.data.title || "Carregando ..."}</h3>
         {!chartInfo.data.values && <Loader size="lg" className="loader-chart"/>}
         {

@@ -7,52 +7,52 @@ const menuLabels = {
   },
   /* buildDarwinTemplate */
   subMenuAbout: {
-    nameApp: "Electron React Typescript",
-    exitApp: "&Close"
+    nameApp: "Orçamentos BR Cirúrgica",
+    exitApp: "&Fechar Aplicação"
   },
   subMenuEdit: {
-    label: "Edit",
-    undo: "Undo",
-    redo: "Redo",
-    cut: "Cut",
-    copy: "Copy",
-    paste: "Paste",
-    selectAll: "Select All"
+    label: "Editar",
+    undo: "Desfazer",
+    redo: "Refazer",
+    cut: "Cortar",
+    copy: "Copiar",
+    paste: "Colar",
+    selectAll: "Selecionar Tudo"
   },
   subMenuViewDev: {
-    label: "View",
-    reloadContent: 'Reload',
-    fullScreen: 'Toggle Full Screen',
+    label: "Visualizar",
+    reloadContent: 'Recarregar',
+    fullScreen: 'Alternar Tela Cheia',
     developerTools: "Open Developer Tools"
   },
   subMenuViewProd: {
-    label: "View",
-    fullScreen: 'Toggle Full Screen',
-    hideAppplication: 'Hide Application',
-    hideOthers: "Hide Others"
+    label: "Visualizar",
+    fullScreen: 'Alternar tela cheia',
+    hideAppplication: 'Ocultar Aplicação',
+    hideOthers: "Ocultar Outros"
   },
   subMenuHelp: {
-    label: "Help",
-    aboutDev: 'About Developer',
-    errorsReport: 'Errors Report'
+    label: "Ajuda",
+    aboutDev: 'Sobre o Desenvolvedor',
+    errorsReport: 'Reportar Erros'
   },
   /* buildDefaultTemplate */
   templateDefault: {
-    file: "File",
-    nameApp: "Electron React Typescript",
-    exitApp: "&Close",
-    edit: "Edit",
-    undo: "Undo",
-    redo: "Redo",
-    cut: "Cut",
-    copy: "Copy",
-    paste: "Paste",
-    selectAll: "Select All",
-    view: '&View',
-    fullScreen: 'Toggle Full Screen',
-    help: 'Help',
-    aboutDev: 'About Developer',
-    errorsReport: 'Errors Report'
+    file: "Arquivo",
+    nameApp: "Orçamentos BR Cirúrgica",
+    exitApp: "&Fechar Aplicação",
+    edit: "Editar",
+    undo: "Desfazer",
+    redo: "Refazer",
+    cut: "Cortar",
+    copy: "Copiar",
+    paste: "Colar",
+    selectAll: "Selecionar Tudo",
+    view: '&Visualizar',
+    fullScreen: 'Alternar tela cheia',
+    help: 'Ajuda',
+    aboutDev: 'Sobre o Desenvolvedor',
+    errorsReport: 'Reportar Erros'
   },
 };
 

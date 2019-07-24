@@ -1,9 +1,10 @@
 import styled from "styled-components";
 
 export const DisplayDashboardPage = styled.div`
-  width: 100%;
+  width: calc(100% - 50px);
   height: 100%;
   position: fixed;
+  margin-left: 50px;
   top: 0px;
   left: 0px;
   overflow-x: hidden;

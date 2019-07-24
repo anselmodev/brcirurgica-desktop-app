@@ -1,6 +1,6 @@
 {
-  "name": "electron-react-typescript",
-  "description": "Electron Application With React and Typescript",
+  "name": "br-cirurgica-orcamentos",
+  "description": "Sistema para Composição de Orçamentos.",
   "version": "0.1.0",
   "private": true,
   "main": "public/electron.js",
@@ -92,8 +92,8 @@
     ]
   },
   "build": {
-    "appId": "com.electron.react",
-    "productName": "Electron React App",
+    "appId": "com.orcamentos.brcirurgica",
+    "productName": "Orçamentos BR Cirúrgica",
     "copyright": "Copyright © 2019 ${author}",
     "mac": {
       "icon": "resources/icon.icns",

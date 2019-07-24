@@ -6,7 +6,6 @@ import {
   readFile,
   writeFile
 } from "../helpers";
-
 const windowAppObj = window as any;
 const fs = windowAppObj.require("fs");
 
@@ -53,13 +52,16 @@ export const getLogin = (): Promise<object | boolean> => {
           });
       } else {
         resolve({
-            errorMessage: true
+          errorMessage: true
         });
       }
     });
   });
 };
-export const setLogin = (getValues: { user: string; password: string; }): Promise<object | boolean> => {
+export const setLogin = (getValues: {
+  user: string;
+  password: string;
+}): Promise<object | boolean> => {
   return new Promise(
     (resolve, reject): void => {
       // check user and password on DATABASE
@@ -87,6 +89,25 @@ export const setLogin = (getValues: { user: string; password: string; }): Promis
             errorMessage: true
           });
         });
+    }
+  );
+};
+
+export const setLogout = (historyRoute: any): Promise<object | boolean> => {
+  return new Promise((resolve, reject): void => {
+    const localFile = `${SYSTEM_PATHS.security}/${SYSTEM_FILES.loginLogout}`;
+
+    fs.unlink(localFile, (err: any) => {
+      if (err) {
+        resolve({
+          error: err,
+          success: false
+        });
+        return false;
+      }
+      historyRoute.push('/login');
+      resolve(true);
+    });
     }
   );
 };

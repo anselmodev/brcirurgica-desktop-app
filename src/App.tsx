@@ -4,6 +4,7 @@ import { HashRouter, Route, Redirect } from "react-router-dom";
 import { store } from "./_core/redux/store";
 import { routeList, RenderSection } from "./_core/routes";
 import  { LogoWaterMark } from './components/LogoWaterMark';
+import  { ModalDialog } from './components/ModalDialog';
 
 import "./assets/css/global-styles.css";
 
@@ -31,6 +32,7 @@ const App: React.FC = () => {
                 />
               );
             })}
+            <ModalDialog />
             <Footer />
           </div>
         </HashRouter>

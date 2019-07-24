@@ -26,7 +26,7 @@ const DashboardPageContainer = (props: Props) => {
   useEffect(() => {
     dispatch(
       setPageAction({
-        title: `Dashboard | Home - ${appInfo.organization}`,
+        title: `Dashboard | Home - ${appInfo.orgShortName}`,
         location: props.history.location
       })
     );

@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect } from "react";
 import { TweenMax, Back } from "gsap/TweenMax";
 import { BarsContainer, BarItem } from "./styles";
-import Tooltip from "../ToolTip";
+import { ToolTip } from "../ToolTip";
 import { Icon } from "rsuite";
 
 interface PropsBarInfo {
@@ -49,7 +49,7 @@ const BarsInfo = (props: PropsBarInfo) => {
   });
   return (
     <Fragment>
-      <Tooltip
+      <ToolTip
         placement="top"
         trigger="hover"
         content={
@@ -69,7 +69,7 @@ const BarsInfo = (props: PropsBarInfo) => {
         <BarItem dimmension={props.percentInfo} leftPos={props.leftPos} className={props.label}>
           <p>{props.label.substr(0, 3)}</p>
         </BarItem>
-      </Tooltip>
+      </ToolTip>
     </Fragment>
   );
 };

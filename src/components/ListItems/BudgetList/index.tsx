@@ -12,7 +12,7 @@ import { calendarDate } from "../../../_core/helpers/dateFormat";
 import { formatValue } from "../../../_core/helpers/formatNumber";
 import { statusNames, statusColors } from "../../../_core/helpers/statusProps";
 import { Paginator } from "../../Paginator";
-import Tooltip from "../../ToolTip";
+import { ToolTip } from "../../ToolTip";
 
 interface PropsBudgetList {
   dataItems: any[];
@@ -59,9 +59,9 @@ export const BudgetList = (props: PropsBudgetList) => {
                     openBudgetHandler(props.number);
                   }}>
                     <span className="cell-coll1">{props.number}</span>
-                    <Tooltip content={`Cliente: ${props.customerName}`}>
+                    <ToolTip content={`Cliente: ${props.customerName}`}>
                       <span className="cell-coll2">{props.customerName}</span>
-                    </Tooltip>
+                    </ToolTip>
                     <span className="cell-coll3">
                       {calendarDate(undefined, undefined, props.updateAt, "L")}
                     </span>

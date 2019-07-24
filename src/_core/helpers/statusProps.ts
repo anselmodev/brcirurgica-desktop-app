@@ -4,6 +4,8 @@ export const statusNames = (status: string) => {
     status === 'await' ? 'Aguardando' : 
     status === 'success' ? 'Aprovado' : 
     status === 'draft' ? 'Rascunho' : 
+    status === 'reapproved' ? 'Reprovado / Fechado com Outro Fornecedor' : 
+    status === 'expired' ? 'Expirado' : 
     'Rascunho'
 }
 
@@ -13,6 +15,8 @@ export const statusColors = (status: string) => {
     status === 'await' ? "#00A6CC" : 
     status === 'success' ? "#00A65A" : 
     status === 'draft' ? "#CCCACA" : 
+    status === 'reapproved' ? 'red' : 
+    status === 'expired' ? 'purple' : 
     "#CCCACA"
 }
 export const statusNumber = (status: string) => {
@@ -21,5 +25,7 @@ export const statusNumber = (status: string) => {
     status === 'await' ? 3 : 
     status === 'success' ? 4 : 
     status === 'draft' ? 5 : 
+    status === 'reapproved' ? 6 : 
+    status === 'expired' ? 7 : 
     "#CCCACA"
 }

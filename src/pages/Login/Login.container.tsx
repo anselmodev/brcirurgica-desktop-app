@@ -68,7 +68,7 @@ const LoginPageContainer = (props: Props) => {
   useEffect(() => {
     dispatch(
       setPageAction({
-        title: `Login do Sistema - ${appInfo.organization}`,
+        title: `Login do Sistema - ${appInfo.orgShortName}`,
         location: props.history.location
       })
     );
