@@ -3,7 +3,11 @@ import { History } from "history";
 import { useDispatch } from "react-redux";
 import LoginPage from "./Login.page";
 import { appInfo } from "../../_core/config/constants";
-import { setLoginAction, setPageAction } from "../../_core/redux/actions";
+import {
+  setLoginAction,
+  setPageAction,
+  modalDialogAction
+} from "../../_core/redux/actions";
 import { getLogin, setLogin } from "../../_core/config/login.conf";
 
 type Props = {
@@ -34,10 +38,24 @@ const LoginPageContainer = (props: Props) => {
   };
   const setLoginHandler = async () => {
     const getUser = (document.querySelector("#user") as HTMLInputElement).value;
-    const getPass = (document.querySelector("#password") as HTMLInputElement).value;
+    const getPass = (document.querySelector("#password") as HTMLInputElement)
+      .value;
 
     if (!getUser || !getPass) {
-      alert("Preencha todos os campos!");
+      dispatch(
+        modalDialogAction({
+          open: true,
+          type: "warn",
+          title: "Atenção",
+          content: <p>Preencha todos os campos para efetuar o login!</p>,
+          buttons: [
+            {
+              appearance: "primary",
+              label: "Tentar Novamente"
+            }
+          ]
+        })
+      );
       return false;
     } else {
       // check login on DATABASE and save data on machine if true
@@ -59,6 +77,20 @@ const LoginPageContainer = (props: Props) => {
         );
         return true;
       } else {
+        dispatch(
+          modalDialogAction({
+            open: true,
+            type: "err",
+            title: "Erro de Login",
+            content: <p>Não foi possível efetuar o login! <br /> Verifique os dados digitados.</p>,
+            buttons: [
+              {
+                appearance: "primary",
+                label: "Tentar Novamente"
+              }
+            ]
+          })
+        );
         alert("Erro ao Efetuar Login!");
         return false;
       }
@@ -84,4 +116,3 @@ const LoginPageContainer = (props: Props) => {
 };
 
 export default LoginPageContainer;
- 

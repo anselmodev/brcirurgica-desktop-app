@@ -14,7 +14,7 @@ import {
   sidebarAction,
   modalDialogAction,
   lockScreenAction,
-  searchAction
+  toggleSearchAction
 } from "../../_core/redux/actions";
 import logoIcon from "../../assets/images/logo_icon.png";
 import { menuItems } from "./menuItems";
@@ -149,7 +149,7 @@ export const Sidebar = (props: Props) => {
 
                     /* Action Search */
                     item.id === "search-section" &&
-                      dispatch(searchAction({open: true}));
+                      dispatch(toggleSearchAction({open: true}));
                     sidebarHandler();
                   }}
                 >

@@ -1,7 +1,7 @@
-import React from "react";
-import { Tooltip, Whisper } from "rsuite";
+import React, { useState } from "react";
+import { Tooltip, Whisper, Popover, Button } from "rsuite";
 
-interface PropsTooltip {
+interface PropsTooltipPopover {
   placement?:
     | "top"
     | "bottom"
@@ -21,20 +21,37 @@ interface PropsTooltip {
     | "autoHorizontalTop"
     | "autoHorizontalBottom";
   trigger?: "click" | "hover" | "focus" | "active";
-  content: any;
+  content?: any;
   children: any;
+  title?: any;
+  buttons?: any;
 }
 
 const _tooltip = (props: HTMLElement | string) => <Tooltip> {props} </Tooltip>;
+const _popover = (props: HTMLElement | string, title: string) => {
+  return <Popover title={title}>{props}</Popover>;
+};
 
-export const ToolTip = (props: PropsTooltip) => {
+export const ToolTip = (props: PropsTooltipPopover) => {
   return (
     <Whisper
       placement={props.placement}
-      trigger={props.trigger || 'hover'}
+      trigger={props.trigger || "hover"}
       speaker={_tooltip(props.content)}
     >
       {props.children}
+    </Whisper>
+  );
+};
+
+export const PopOver = (props: PropsTooltipPopover) => {
+  return (
+    <Whisper
+      placement={props.placement}
+      trigger={props.trigger || "hover"}
+      speaker={_popover(props.content, props.title)}
+    >
+        {props.children}
     </Whisper>
   );
 };

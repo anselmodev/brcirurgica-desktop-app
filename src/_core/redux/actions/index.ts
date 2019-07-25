@@ -3,6 +3,7 @@ import {
   TOGGLE_MODAL_DIALOG,
   TOGGLE_LOCK_SCREEN,
   TOGGLE_SEARCH,
+  RESULT_SEARCH,
   SET_LOGIN,
   SET_PAGE_ROUTE,
   DATA_CHART,
@@ -54,9 +55,15 @@ export function lockScreenAction(payload?: LockScreenAction["payload"]) {
     payload
   };
 }
-export function searchAction(payload?: SearchAction["payload"]) {
+export function toggleSearchAction(payload?: SearchAction["payload"]) {
   return {
     type: TOGGLE_SEARCH,
+    payload
+  };
+}
+export function resultSearchAction(payload?: SearchAction["payload"]) {
+  return {
+    type: RESULT_SEARCH,
     payload
   };
 }

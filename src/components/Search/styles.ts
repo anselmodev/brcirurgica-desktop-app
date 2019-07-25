@@ -69,6 +69,9 @@ export const SearchContainer = styled.div`
   .title-result-search {
     padding: 10px;
     box-sizing: border-box;
+    b {
+      text-transform: uppercase;
+    }
   }
   .group-button {
     width: 450px;
@@ -96,6 +99,19 @@ export const SearchContainer = styled.div`
     box-sizing: border-box;
     padding: 10px;
     border-top: 1px solid #efefef;
+  }
+  .loader-result{
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    background-color: rgba(255,255,255, 0.7);
+
+    span {
+      margin-top: 120px;
+    }
   }
 
   /* Box results */

@@ -1,9 +1,9 @@
-import { TOGGLE_SEARCH, SearchAction, SearchStore } from "../types";
+import { TOGGLE_SEARCH, RESULT_SEARCH, SearchAction, SearchStore } from "../types";
 
 const searchState: SearchStore = {
   data: {
     open: false,
-    filter: "os",
+    filter: "Orçamentos",
     result: []
   }
 };
@@ -14,8 +14,16 @@ export function reducerSearch(state = searchState, action: SearchAction) {
       return {
         ...state,
         data: {
-          open: action.payload.open,
-          filter: action.payload.filter || "os",
+          ...state.data,
+          open: action.payload.open || false
+        }
+      };
+    case RESULT_SEARCH:
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          filter: action.payload.filter || "Orçamentos",
           result: action.payload.result || []
         }
       };

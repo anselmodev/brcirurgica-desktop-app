@@ -5,6 +5,7 @@ export const TOGGLE_SIDEBAR = "TOGGLE_SIDEBAR";
 export const TOGGLE_MODAL_DIALOG = "TOGGLE_MODAL_DIALOG";
 export const TOGGLE_LOCK_SCREEN = "TOGGLE_LOCK_SCREEN";
 export const TOGGLE_SEARCH = "TOGGLE_SEARCH";
+export const RESULT_SEARCH = "RESULT_SEARCH";
 
 /* PAGE */
 export interface PageStore {
@@ -109,15 +110,15 @@ export interface LockScreenAction {
 export interface SearchStore {
   data: {
     open: boolean;
-    filter: "os" | "customer" | "user" | "product";
+    filter: "Orçamentos" | "Clientes" | "Usuários" | "Produtos";
     result: object[]
   };
 }
 export interface SearchAction {
-  type: typeof TOGGLE_SEARCH;
+  type: typeof TOGGLE_SEARCH | typeof RESULT_SEARCH;
   payload: {
-    open: boolean;
-    filter?: "os" | "customer" | "user" | "product";
+    open?: boolean;
+    filter?: "Orçamentos" | "Clientes" | "Usuários" | "Produtos";
     result?: object[]
   };
 }

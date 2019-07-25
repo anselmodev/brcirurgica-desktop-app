@@ -1,32 +1,81 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { History } from "history";
-import { Input, InputGroup, Icon, Button } from "rsuite";
 import * as _ from "lodash";
+import { Input, InputGroup, Icon, Button, Loader } from "rsuite";
 import Mousetrap from "mousetrap";
 import { SearchContainer } from "./styles";
-import { ToolTip } from "../ToolTip";
-import { searchAction } from "../../_core/redux/actions";
+import { ToolTip, PopOver } from "../ToolTip";
+import { toggleSearchAction, resultSearchAction } from "../../_core/redux/actions";
 import { calendarDate } from "../../_core/helpers/dateFormat";
 
 type Props = {
   history: History;
 };
 export const Search = (props: Props) => {
+  const [loaderResults, setLoaderResults] = useState(false);
   const dispatch = useDispatch();
   const search = useSelector((state: any) => state.search.data);
   const inputAutoFocus = useRef<HTMLInputElement>();
-  const debounce = useRef(_.debounce(() => handlerSearch(), 1000));
+  const debounce = useRef(
+    _.debounce((filter?: any) => handlerSearch(filter), 800)
+  );
 
-  const handlerSearch = () => {
+  const FilterType = () => {
+    return (
+      <div>
+        <Button
+          size="xs"
+          style={{ margin: "5px" }}
+          appearance="ghost"
+          onClick={() => handlerSearch("Orçamentos")}
+        >
+          Orçamentos
+        </Button>
+        <Button
+          size="xs"
+          style={{ margin: "5px" }}
+          appearance="ghost"
+          onClick={() => handlerSearch("Clientes")}
+        >
+          Clientes
+        </Button>
+        <Button
+          size="xs"
+          style={{ margin: "5px" }}
+          appearance="ghost"
+          onClick={() => handlerSearch("Produtos")}
+        >
+          Produtos
+        </Button>
+        <Button
+          size="xs"
+          style={{ margin: "5px" }}
+          appearance="ghost"
+          onClick={() => handlerSearch("Usuários")}
+        >
+          Usuários
+        </Button>
+      </div>
+    );
+  };
+
+  const handlerSearch = (
+    filter?: "Orçamentos" | "Clientes" | "Usuários" | "Produtos"
+  ) => { 
+    setLoaderResults(true);
     const getTerm: any = document.querySelector("#input-search");
-    if (getTerm.value.length >= 3) {
+    if (getTerm && getTerm.value.length >= 3) {
+      
       // buscar no banco
-      requestDB(getTerm.value);
+      setTimeout(() => {
+        requestDB(getTerm.value, filter);
+      }, 1000);
+
     } else {
+      setLoaderResults(false);
       dispatch(
-        searchAction({
-          open: true,
+        resultSearchAction({
           result: []
         })
       );
@@ -34,48 +83,92 @@ export const Search = (props: Props) => {
   };
 
   // Request to DB
-  const requestDB = (term: string) => {
-    // const resultDb: object[] = [];
-    const resultDb = term
-      ? [
-          {
-            id: 1,
-            numberOs: 2862,
-            customerName: "PETICULAR WARREN HENDRIX",
-            dateUpd: "2019-07-02 00:00:00"
-          },
-          {
-            id: 2,
-            numberOs: 2962,
-            customerName: "BIOTICA AUSTIN BLAKE",
-            dateUpd: "2019-07-02 00:00:00"
-          },
-          {
-            id: 3,
-            numberOs: 2923,
-            customerName: "AQUASURE GLOVER WALLS",
-            dateUpd: "2019-07-02 00:00:00"
-          },
-          {
-            id: 4,
-            numberOs: 2860,
-            customerName: "MARKETOID LOUISA JENNINGS",
-            dateUpd: "2019-07-02 00:00:00"
-          }
-        ]
-      : [];
+  const requestDB = (term: string, filter?: any) => {
+    const resultDb =
+      !filter || filter === "Orçamentos"
+        ? [
+            {
+              id: 1,
+              number: 2862,
+              name: "PETICULAR WARREN HENDRIX",
+              dateUpd: "2019-07-02 00:00:00"
+            },
+            {
+              id: 2,
+              number: 2962,
+              name: "BIOTICA AUSTIN BLAKE",
+              dateUpd: "2019-07-02 00:00:00"
+            }
+          ]
+        : filter === "Produtos"
+        ? [
+            {
+              id: 1,
+              code: 2862,
+              name: "PRODUCT BEST 1",
+              price: 123.0,
+              dateUpd: "2019-07-02 00:00:00"
+            },
+            {
+              id: 2,
+              code: 2962,
+              name: "PRODUCT BEST 2",
+              price: 45.45,
+              dateUpd: "2019-07-02 00:00:00"
+            }
+          ]
+        : filter === "Clientes"
+        ? [
+            {
+              id: 1,
+              cpfCnpj: "357.080.528-05",
+              name: "VALERIA ANDRADE",
+              email: "val.andrade21@yahoo.com.br",
+              phone: "(11) 9242-8971",
+              dateAdd: "2019-07-02 00:00:00"
+            },
+            {
+              id: 2,
+              cpfCnpj: "05.452.786/0001-00",
+              name: "JUSTICA FEDERAL DE PRIMEIRO GRAU EM MINAS GERAIS",
+              email: "larissa.goncalves@trf1.jus.br",
+              phone: "(31) 3501-1367",
+              dateUpd: "2019-07-02 00:00:00"
+            }
+          ]
+        : filter === "Usuários"
+        ? [
+            {
+              id: 1,
+              userName: "brcirurgica",
+              name: "VALERIA ANDRADE",
+              email: "vendas@brcirurgica.com.br",
+              phone: "(11) 3938-9661",
+              dateAdd: "2019-07-02 00:00:00"
+            },
+            {
+              id: 2,
+              userName: "VENDAS3",
+              name: "SUELLEN BONFIM",
+              email: "vendas@brcirurgica.com.br",
+              phone: "(11) 2924-9414",
+              dateAdd: "2019-07-02 00:00:00"
+            }
+          ]
+        : [];
 
     if (resultDb.length !== 0) {
+      setLoaderResults(false);
       dispatch(
-        searchAction({
-          open: true,
-          result: resultDb
+        resultSearchAction({
+          result: resultDb,
+          filter
         })
       );
     } else {
+      setLoaderResults(false);
       dispatch(
-        searchAction({
-          open: true,
+        resultSearchAction({
           result: [
             {
               noResult: true
@@ -94,7 +187,7 @@ export const Search = (props: Props) => {
     }, 500);
   }
   Mousetrap.bind("ctrl+p", function() {
-    dispatch(searchAction({ open: true }));
+    dispatch(toggleSearchAction({ open: true }));
   });
 
   return (
@@ -106,7 +199,7 @@ export const Search = (props: Props) => {
             <p
               className="btn-exit-search"
               onClick={() =>
-                dispatch(searchAction({ open: false, result: [] }))
+                dispatch(toggleSearchAction({ open: false }))
               }
             >
               <Icon icon="close-circle" size="2x" />
@@ -123,16 +216,26 @@ export const Search = (props: Props) => {
                 debounce.current();
               }}
             />
-            <InputGroup.Button>
-              <ToolTip placement="right" trigger="hover" content="Aplicar Filtro">
-                <Icon icon="filter" />
-              </ToolTip>
-            </InputGroup.Button>
+            { search.result.length ?
+              <PopOver
+                placement="topRight"
+                trigger="hover"
+                content={<FilterType />}
+                title="Filtrar por:"
+              >
+                <InputGroup.Button>
+                  <Icon icon="filter" /> Filtros
+                </InputGroup.Button>
+              </PopOver>
+            : <InputGroup.Button disabled>
+                <Icon icon="filter" /> Filtros
+              </InputGroup.Button>
+            }
           </InputGroup>
 
           {!search.result || search.result.length === 0 ? (
             <p className="tips-search">
-              Pesquise por: Orçamentos, Clientes Produtos, etc ... <br />
+              Pesquise por: Orçamentos, Clientes Produtos ou Usuários! <br />
               <small>
                 <em>( Mínimo de 3 caracteres )</em>
               </small>
@@ -140,77 +243,102 @@ export const Search = (props: Props) => {
           ) : (
             <div className="result-search">
               {/* Results Menu */}
-              <div>
-                <p className="title-result-search">Resultados:</p>
-              </div>
+                <p className="title-result-search">
+                  Resultados em <b>{search.filter}</b>:
+                </p>
 
               {/* Results Box */}
               <div className="list-results scroll-style">
-                {/* Results Budget */}
                 <div id="res-budgets">
+                  {
+                    loaderResults && 
+                    <span className="loader-result">
+                      <span><Loader size="md" /></span>
+                    </span>
+                  }
                   {search.result.length && search.result[0].noResult ? (
-                    <p className="search-noresult">Nenhum resultado com o termo digitado!</p>
+                    <p className="search-noresult">
+                      Nenhum resultado com o termo digitado!
+                    </p>
                   ) : (
-                    search.result.map((item: any) => {
-                      return (
-                        <div key={item.id} className="box-results-cell">
-                          <p className="box-results-number">
-                            <b>Número do Orçamento:</b> {item.numberOs}
-                          </p>
-                          <p className="box-results-name">
-                            <b>Cliente:</b> {item.customerName}
-                          </p>
-                          <p className="box-results-options">
-                            <b>Última Atualização:</b>
-                            {calendarDate( undefined, undefined, item.dateUpd, "LLL" )} hrs
-                          </p>
-                        </div>
-                      );
-                    })
+                    <div>
+                      {
+                        /* Results budget (filter: OS) */
+                        search.filter === "Orçamentos"
+                        ? search.result.map((item: any) => {
+                            return (
+                              <div key={item.id} className="box-results-cell">
+                                <p className="box-results-number">
+                                  <b>Número do Orçamento:</b> {item.number}
+                                </p>
+                                <p className="box-results-name">
+                                  <b>Cliente:</b> {item.name}
+                                </p>
+                                <p className="box-results-options">
+                                  <b>Última Atualização:</b> {calendarDate( undefined, undefined, item.dateUpd, "LLL" )} hrs
+                                </p>
+                              </div>
+                            );
+                          })
+                        : 
+                        /* Results Customers (filter: CUST) */
+                        search.filter === "Clientes"
+                        ? search.result.map((item: any) => {
+                            return (
+                              <div key={item.id} className="box-results-cell">
+                                <p className="box-results-number">
+                                  <b>CPF / CNPJ:</b> {item.cpfCnpj}
+                                </p>
+                                <p className="box-results-name">
+                                  <b>Nome / Razão:</b> {item.name}
+                                </p>
+                                <p className="box-results-options">
+                                  <b>Cadastrado em:</b> {calendarDate( undefined, undefined, item.dateAdd, "LLL" )} hrs
+                                </p>
+                              </div>
+                            );
+                          })
+                        : 
+                        /* Results Products (filter: PROD) */
+                        search.filter === "Produtos"
+                        ? search.result.map((item: any) => {
+                            return (
+                              <div key={item.id} className="box-results-cell">
+                                <p className="box-results-number">
+                                  <b>Código do Produto:</b> {item.code}
+                                </p>
+                                <p className="box-results-name">
+                                  <b>Nome:</b> {item.name}
+                                </p>
+                                <p className="box-results-options">
+                                  <b>Última Atualização:</b> {calendarDate( undefined, undefined, item.dateUpd, "LLL" )} hrs
+                                </p>
+                              </div>
+                            );
+                          })
+                        : 
+                        /* Results Users (filter: USER) */
+                        search.filter === "Usuários"
+                        ? search.result.map((item: any) => {
+                            return (
+                              <div key={item.id} className="box-results-cell">
+                                <p className="box-results-number">
+                                  <b>Usuário / Login:</b> {item.userName}
+                                </p>
+                                <p className="box-results-name">
+                                  <b>Nome:</b> {item.name}
+                                </p>
+                                <p className="box-results-options">
+                                  <b>Cadastrado em:</b> {calendarDate( undefined, undefined, item.dateAdd, "LLL" )} hrs
+                                </p>
+                              </div>
+                            );
+                          })
+                        : ""
+                      }
+                    </div>
                   )}
                 </div>
-
-                {/* Results Customers */}
-                {/* 
-                    <div id="res-customers">
-                    <div className="box-results-cell">
-                      <p className="box-results-number">
-                        <b>Código do Cliente:</b> 93420
-                      </p>
-                      <p className="box-results-name">
-                        <b>Nome:</b> Nome completo do CLiente Aqui Nome completo do CLiente Aqui
-                      </p>
-                      <p className="box-results-options">
-                        <b>Orçamentos:</b> 432 
-                      </p>
-                    </div> 
-                  </div>
-                   */}
-
-                {/* Results Products */}
-                {/* 
-                    <div id="res-products">
-                    <div className="box-results-cell">
-                      <p className="box-results-number">
-                        <b>Código do Produto:</b> 93420
-                      </p>
-                      <p className="box-results-name">
-                        <b>Nome:</b> Nome completo do CLiente Aqui Nome completo do CLiente Aqui
-                      </p>
-                      <p className="box-results-options">
-                        <b>Valor:</b> R$ 000,00 
-                      </p>
-                    </div> 
-                  </div>
-                   */}
-
-                {/* results.data.length > 0
-                    ? results.data.map(item => (
-                        <p key={item.id}>
-                          {item.id} {item.content} ...
-                        </p>
-                      ))
-                    : "Nenhum Resultado Encontrado!" */}
               </div>
             </div>
           )}
