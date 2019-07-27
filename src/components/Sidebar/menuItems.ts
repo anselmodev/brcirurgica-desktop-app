@@ -36,7 +36,7 @@ export const menuItems = [
     goToUrl: (func: Function) => func
   },
   {
-    id: "budget",
+    id: "new-budget",
     type: "sub",
     label: "Novo Orçamento",
     tipKey: "( Ctrl+N )",
@@ -126,7 +126,7 @@ export const menuItems = [
     tipKey: null,
     upercase: false,
     disabledItem: false,
-    url: "/profile",
+    url: null,
     icon: null,
     classStyle: "",
     goToUrl: (func: Function) => func
@@ -170,11 +170,11 @@ export const menuItems = [
   {
     id: "admin-system",
     type: "sub",
-    label: "Sistema",
+    label: "Configurações",
     tipKey: null,
     upercase: false,
     disabledItem: false,
-    url: "/system",
+    url: null,
     icon: null,
     classStyle: "",
     goToUrl: (func: Function) => func

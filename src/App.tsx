@@ -3,12 +3,13 @@ import { Provider } from "react-redux";
 import { HashRouter, Route, Redirect } from "react-router-dom";
 import { store } from "./_core/redux/store";
 import { routeList, RenderSection } from "./_core/routes";
-import  { LogoWaterMark } from './components/LogoWaterMark';
+import  { BackgroundApp } from './components/BackgroundApp';
 import  { ModalDialog } from './components/ModalDialog';
 
-import "./assets/css/global-styles.css";
+import "./assets/css/global-styles.css"; 
 
 import { Footer } from "./components/Footer";
+import { BudgetForm } from "./components/Forms/BudgetForm";
 
 const App: React.FC = () => {
   return (
@@ -16,7 +17,7 @@ const App: React.FC = () => {
       <Provider store={store}>
         <HashRouter basename="/" hashType="noslash">
           <div className="root-container">
-            <LogoWaterMark />
+            <BackgroundApp />
             <Route exact path="/" render={() => <Redirect to="/login" />} />
             {routeList.map(Page => {
               return (
@@ -34,6 +35,7 @@ const App: React.FC = () => {
             })}
             <ModalDialog />
             <Footer />
+            <BudgetForm />
           </div>
         </HashRouter>
       </Provider>

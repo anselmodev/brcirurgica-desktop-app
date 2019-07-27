@@ -14,11 +14,12 @@ import {
   sidebarAction,
   modalDialogAction,
   lockScreenAction,
-  toggleSearchAction
+  toggleSearchAction,
+  toggleBudgetAction
 } from "../../_core/redux/actions";
 import logoIcon from "../../assets/images/logo_icon.png";
 import { menuItems } from "./menuItems";
-import { setLogout } from "../../_core/config/login.conf"; 
+import { setLogout } from "../../_core/config/login.conf";
 
 type Props = {
   history: History;
@@ -56,7 +57,6 @@ export const Sidebar = (props: Props) => {
       );
     }
   };
-  // const logoutHandler
 
   return location.pathname === "/login" ? (
     <div />
@@ -112,6 +112,16 @@ export const Sidebar = (props: Props) => {
                   onClick={() => {
                     item.url && item.goToUrl(push(item.url));
 
+                    /* Action Lock Screen */
+                    item.id === "new-budget" &&
+                      setTimeout(() => {
+                        dispatch(
+                          toggleBudgetAction({
+                            open: true
+                          })
+                        );
+                      }, 500);
+
                     /* Action Logout */
                     item.id === "app-logout" &&
                       dispatch(
@@ -149,7 +159,7 @@ export const Sidebar = (props: Props) => {
 
                     /* Action Search */
                     item.id === "search-section" &&
-                      dispatch(toggleSearchAction({open: true}));
+                      dispatch(toggleSearchAction({ open: true }));
                     sidebarHandler();
                   }}
                 >

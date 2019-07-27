@@ -1,4 +1,5 @@
 import React from "react";
+import { useDispatch } from "react-redux";
 import { Icon } from "rsuite";
 import {
   BudgetListContainer,
@@ -13,6 +14,8 @@ import { formatValue } from "../../../_core/helpers/formatNumber";
 import { statusNames, statusColors } from "../../../_core/helpers/statusProps";
 import { Paginator } from "../../Paginator";
 import { ToolTip } from "../../ToolTip";
+import { toggleBudgetAction } from "../../../_core/redux/actions";
+
 
 interface PropsBudgetList {
   dataItems: any[];
@@ -30,14 +33,22 @@ interface PropsDataItems {
   totalPrice: number;
 }
 
-const openBudgetHandler = (numberOS: number) => {
-  console.log("Abrir: ", numberOS);
-};
 const generatePDFHandler = (numberOS: number) => {
   console.log("gerar PDF: ", numberOS);
 };
 
 export const BudgetList = (props: PropsBudgetList) => {
+  const dispatch = useDispatch();
+  
+  const openBudgetHandler = (numberOS: number) => {
+    dispatch(
+      toggleBudgetAction({
+        open: true,
+        number: numberOS
+      })
+    );
+  };
+
   return (
     <BudgetListContainer height="calc(100% - 35px)">
       <HeadListCell>
@@ -55,9 +66,11 @@ export const BudgetList = (props: PropsBudgetList) => {
             return (
               <ListCell key={props.number}>
                 <CellLine>
-                  <span onClick={() => {
-                    openBudgetHandler(props.number);
-                  }}>
+                  <span
+                    onClick={() => {
+                      openBudgetHandler(props.number);
+                    }}
+                  >
                     <span className="cell-coll1">{props.number}</span>
                     <ToolTip content={`Cliente: ${props.customerName}`}>
                       <span className="cell-coll2">{props.customerName}</span>

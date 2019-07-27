@@ -1,4 +1,5 @@
 const electron = require("electron");
+const Sentry = require('@sentry/electron');
 const isDev = require("electron-is-dev");
 const path = require("path");
 // const { default: installExtension, REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS } = require('electron-devtools-installer');
@@ -8,6 +9,7 @@ const MAIN_PROCESS_REQUEST = require("../electron-core/main-request");
 // const REACT_PERFORMANCE = {id: 'fcombecpigkkfcbfaeikoeegkmkjfbfm', electron: '>=1.2.1'};
 const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
+Sentry.init({dsn: 'https://cfa159b790dc41afb3b54b78d807530c@sentry.io/1514683'});
 let mainWindow;
 let splashScreen;
 
@@ -67,6 +69,8 @@ function createWindow() {
 function prepareApp() {
   createSplash();
   createWindow();
+
+  // check and create local app folders
 
   mainWindow.on("ready-to-show", () => {
     setTimeout(function() {

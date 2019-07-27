@@ -13,8 +13,9 @@ type Props = {
   history: History;
 };
 export const Search = (props: Props) => {
-  const [loaderResults, setLoaderResults] = useState(false);
   const dispatch = useDispatch();
+  const [loaderResults, setLoaderResults] = useState(false);
+  const { locked } = useSelector((state: any) => state.lockScreen.data);
   const search = useSelector((state: any) => state.search.data);
   const inputAutoFocus = useRef<HTMLInputElement>();
   const debounce = useRef(
@@ -187,7 +188,9 @@ export const Search = (props: Props) => {
     }, 500);
   }
   Mousetrap.bind("ctrl+p", function() {
-    dispatch(toggleSearchAction({ open: true }));
+    if (!locked) {
+      dispatch(toggleSearchAction({ open: true }));
+    }
   });
 
   return (

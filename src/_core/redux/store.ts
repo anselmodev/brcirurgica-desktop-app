@@ -8,6 +8,7 @@ import { reducerCharts }  from './reducers/chart.reducer';
 import { reducerModal }  from './reducers/modal.reducer';
 import { reducerLockscreen }  from './reducers/lockscreen.reducer';
 import { reducerSearch }  from './reducers/search.reducer';
+import { reducerBudgetForm }  from './reducers/budgetForm.reducer';
 
 const reducers = combineReducers({
     pageSection: reducerPages,
@@ -16,7 +17,8 @@ const reducers = combineReducers({
     charts: reducerCharts,
     modalDialog: reducerModal,
     lockScreen: reducerLockscreen,
-    search: reducerSearch
+    search: reducerSearch,
+    budget: reducerBudgetForm
   })
 
 

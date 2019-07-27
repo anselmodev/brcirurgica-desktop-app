@@ -4,6 +4,8 @@ import {
   TOGGLE_LOCK_SCREEN,
   TOGGLE_SEARCH,
   RESULT_SEARCH,
+  TOGGLE_BUDGET_FORM,
+  RESULT_BUDGET_FORM,
   SET_LOGIN,
   SET_PAGE_ROUTE,
   DATA_CHART,
@@ -13,7 +15,8 @@ import {
   ChartAction,
   ModalDialogAction,
   LockScreenAction,
-  SearchAction
+  SearchAction,
+  BudgetAction
 } from "../types";
 
 export function setLoginAction(payload: LoginAction["payload"]) {
@@ -64,6 +67,18 @@ export function toggleSearchAction(payload?: SearchAction["payload"]) {
 export function resultSearchAction(payload?: SearchAction["payload"]) {
   return {
     type: RESULT_SEARCH,
+    payload
+  };
+}
+export function toggleBudgetAction(payload?: BudgetAction["payload"]) {
+  return {
+    type: TOGGLE_BUDGET_FORM,
+    payload
+  };
+}
+export function resultBudgetAction(payload?: BudgetAction["payload"]) {
+  return {
+    type: RESULT_BUDGET_FORM,
     payload
   };
 }

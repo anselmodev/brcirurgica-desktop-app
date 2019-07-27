@@ -3,6 +3,7 @@ import { History } from "history";
 import { useDispatch, useSelector } from "react-redux";
 import { TweenMax, Back } from "gsap/TweenMax";
 import { Icon, Input, Button } from "rsuite";
+import Mousetrap from "mousetrap";
 import { LockScreenContainer } from "./styles";
 import { keypressType } from "../../_core/helpers/keypressType";
 import { lockScreenAction, modalDialogAction } from "../../_core/redux/actions";
@@ -105,6 +106,14 @@ export const LockScreen = (props: Props) => {
       });
     }
   };
+
+  Mousetrap.bind("ctrl+l", function() {
+      dispatch(
+        lockScreenAction({
+          locked: true
+        })
+      );
+  });
 
   useEffect(() => {
     if (lockScreen.locked) {

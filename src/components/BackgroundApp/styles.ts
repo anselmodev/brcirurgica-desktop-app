@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const LogoWaterMarkContainer = styled.div`
+export const BackgroundAppContainer = styled.div`
     width: 100%;
     height: 100%;
     position: absolute;
@@ -9,7 +9,7 @@ export const LogoWaterMarkContainer = styled.div`
     user-select: none;
     pointer-events: none; 
 
-    img {
+    .image-default {
         width: 400px;
         opacity: 0.08;
         position: absolute;

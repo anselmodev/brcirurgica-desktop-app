@@ -26,7 +26,7 @@ const DashboardPage = (props: PropsDashboardPage) => {
           <Icon icon="share-square" className="icon-box" size="5x" />
           <b>0000</b>
           <p>Total Emitidos</p>
-          <span>Ver Detalhes ...</span>
+          <span><Icon icon="charts-line"/> Detalhes</span>
         </div>
         <div
           className="box-info box-canceled"
@@ -38,7 +38,7 @@ const DashboardPage = (props: PropsDashboardPage) => {
           <Icon icon="thumbs-down" className="icon-box" size="5x" />
           <b>0000</b>
           <p>Cancelados / Reprovados</p>
-          <span>Ver Detalhes ...</span>
+          <span><Icon icon="charts-line"/> Detalhes</span>
         </div>
         <div
           className="box-info box-await"
@@ -50,7 +50,7 @@ const DashboardPage = (props: PropsDashboardPage) => {
           <Icon icon="clock-o" className="icon-box" size="5x" />
           <b>0000</b>
           <p>Aguardando</p>
-          <span>Ver Detalhes ...</span>
+          <span><Icon icon="charts-line"/> Detalhes</span>
         </div>
         <div
           className="box-info box-success"
@@ -62,7 +62,7 @@ const DashboardPage = (props: PropsDashboardPage) => {
           <Icon icon="handshake-o" className="icon-box" size="5x" />
           <b>0000</b>
           <p>Aprovados</p>
-          <span>Ver Detalhes ...</span>
+          <span><Icon icon="charts-line"/> Detalhes</span>
         </div>
       </div>
       {/* Title */}

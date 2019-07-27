@@ -6,6 +6,8 @@ export const TOGGLE_MODAL_DIALOG = "TOGGLE_MODAL_DIALOG";
 export const TOGGLE_LOCK_SCREEN = "TOGGLE_LOCK_SCREEN";
 export const TOGGLE_SEARCH = "TOGGLE_SEARCH";
 export const RESULT_SEARCH = "RESULT_SEARCH";
+export const TOGGLE_BUDGET_FORM = "TOGGLE_BUDGET_FORM";
+export const RESULT_BUDGET_FORM = "RESULT_BUDGET_FORM";
 
 /* PAGE */
 export interface PageStore {
@@ -106,7 +108,7 @@ export interface LockScreenAction {
   type: typeof TOGGLE_LOCK_SCREEN;
   payload: LockScreenStore["data"];
 }
-/* TOGGLE SEARCH */
+/* TOGGLE AND RESULT SEARCH */
 export interface SearchStore {
   data: {
     open: boolean;
@@ -119,6 +121,24 @@ export interface SearchAction {
   payload: {
     open?: boolean;
     filter?: "Orçamentos" | "Clientes" | "Usuários" | "Produtos";
+    result?: object[]
+  };
+}
+/* TOGGLE AND RESULT BUDGET FORM */
+export interface BudgetStore {
+  data: {
+    open: boolean;
+    number: number | null;
+    modified: boolean;
+    result: object[]
+  };
+}
+export interface BudgetAction {
+  type: typeof TOGGLE_BUDGET_FORM | typeof RESULT_BUDGET_FORM;
+  payload: {
+    open?: boolean;
+    number?: number;
+    modified?: boolean;
     result?: object[]
   };
 }
