@@ -2,12 +2,12 @@ import styled from "styled-components";
 
 export const SidebarContainer = styled.div`
   width: 300px;
-  height: 90%;
-  margin: 1% 0;
+  height: 700px;
   background-color: #173d50;
   transform: translateX(-260px) translateZ(0px);
   position: absolute;
-  top: 3.5%;
+  top: 50%;
+  margin-top: -350px;
   z-index: 10;
   overflow: hidden;
 

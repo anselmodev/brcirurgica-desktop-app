@@ -32,7 +32,7 @@ export const Preloader = styled.div`
   top: 0;
   left: 0;
   background-color: rgba(255, 255, 255, 0.7);
-  z-index: 2;
+  z-index: 6;
 
   .loader-budget {
     position: relative;
@@ -70,7 +70,6 @@ export const LeftBlockInfo = styled.div`
   position: absolute;
   top: 0;
   left: 0;
-  /* background-color: rgba(255, 255, 255, 0.1); */
   box-sizing: border-box;
   padding: 10px 20px;
   p {
@@ -140,7 +139,7 @@ export const BtnCloseForm = styled.div<any>(() => ({
   position: "absolute",
   top: -11,
   right: -11,
-  zIndex: 4
+  zIndex: 7,
 }));
 
 export const ContentForm = styled.div<any>(() => ({
@@ -150,6 +149,76 @@ export const ContentForm = styled.div<any>(() => ({
   overflow: "hidden auto",
   padding: "10px 20px"
 }));
+
+export const FormBudget = styled.div`
+  .row-form {
+    min-height: 65px;
+    margin-top: 20px;
+  }
+
+  .input-form-size {
+    width: 90%;
+    /* margin: 0 3%; */
+  }
+  .input-container {
+    width: 100%;
+    position: relative;
+    margin: 0 10px;
+
+    .input-title {
+      font-weight: 600;
+      color: #525252;
+      margin: 2px;
+      display: inline-block;
+
+      .input-icon-required {
+        color: red;
+        opacity: 0.3;
+        font-size: 9px;
+        position: relative;
+        /* top: -2px; */
+      }
+    }
+    .input-tips {
+      width: 100%;
+      font-weight: 500;
+      font-size: 11px;
+      font-style: italic;
+      color: #2a9bb6;
+      /* display: props.tip ? "inline" : "none" */
+    }
+  }
+`;
+
+export const TableLineHead = styled.div`
+  font-size: 12px;
+  font-style: italic;
+  color: #9c9c9c;
+  margin: 3px 0;
+  padding: 3px 0;
+`;
+export const TableLineContainerInput = styled.div`
+  border: 1px solid #e5e5ea;
+  transition: border-color ease-in-out 0.3s;
+  border-radius: 6px;
+  padding: 7px 11px;
+  font-size: 14px;
+  line-height: 1.42857143;
+`;
+export const TableLineContent = styled.div`
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 30px;
+`;
+export const TableLineContainerTable = styled.div`
+  height: 40px;
+  /* border-bottom: 1px solid #e5e5ea; */
+  transition: border-color ease-in-out 0.3s;
+  padding: 7px 5px;
+  font-size: 14px;
+  line-height: 1.42857143;
+`;
 
 export const FooterForm = styled.div`
   width: 100%;
@@ -171,7 +240,7 @@ export const FooterForm = styled.div`
     width: 50%;
     float: right;
     button {
-        float: right;
+      float: right;
     }
   }
 `;
