@@ -5,10 +5,10 @@ import { TweenMax, Back } from "gsap/TweenMax";
 import { Icon, Input, Button } from "rsuite";
 import Mousetrap from "mousetrap";
 import { LockScreenContainer } from "./styles";
-import { keypressType } from "../../_core/helpers/keypressType";
-import { lockScreenAction, modalDialogAction } from "../../_core/redux/actions";
-import logoBR from "../../assets/images/logo_icon.png";
-import { setLogout, getLogin } from "../../_core/config/login.conf";
+import { keypressType } from "_core/helpers/keypressType";
+import { lockScreenAction, modalDialogAction } from "_core/redux/actions";
+import logoBR from "assets/images/logo_icon.png";
+import { setLogout, getLogin } from "_core/config/login.conf";
 
 type Props = {
   history: History;

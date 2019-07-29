@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { TweenMax } from "gsap/TweenMax";
 import { useDispatch, useSelector } from "react-redux";
 import * as _ from "lodash";
@@ -33,52 +33,42 @@ import {
 import {
   // resultBudgetAction,
   toggleBudgetAction
-} from "../../../_core/redux/actions";
-import { ToolTip } from "../../ToolTip";
-import selectData from "../jsonFiles/status-select.json";
+} from "_core/redux/actions";
+import { ToolTip } from "components/ToolTip";
+import selectData from "components/Forms/jsonFiles/status-select.json";
+import  { InputText, InputDatePicker, InputSelectPicker } from '../inputElements';
+import  { 
+  inputMask,
+  formatValue, 
+  statusNames, 
+  statusIcons, 
+  statusTextColors, 
+  statusBackgroundColors, 
+  calendarDate 
+} from '_core/helpers';
 
-import  { InputText, InputDatePicker, InputTextPicker } from '../inputElements';
+import mockBudget  from 'mockData/mockSingleBudget.json';
 
 export const BudgetForm = () => {
-  const dispatch = useDispatch();
+  const dateNow = new Date();
+  const [budgetData, setBudgetData] = useState<any>({});
   const [stateLoader, setStateLoader] = useState(false);
   const [productsAndCustomer, setProductsAndCustomer] = useState({ customer: false, products: false });
+  const dispatch = useDispatch();
   const { locked } = useSelector((state: any) => state.lockScreen.data);
-  const { open, number, modified, result } = useSelector(
+  const { open, number, modified } = useSelector(
     (state: any) => state.budget.data
   );
   const debounceFunction = useRef(
-    _.debounce((funcAction: Function) => funcAction(), 400)
+    _.debounce((funcAction: Function) => funcAction(), 500)
   );
 
-  const customertHandler = (action?: boolean) => {
-    if (action) {
-      setProductsAndCustomer(prevVal => ({ ...prevVal, customer: true }));
-    } else {
-      setProductsAndCustomer(prevVal => ({ ...prevVal, customer: false }));
-    }
-    // modifiedForm(true);
-  };
-  const productHandler = (action?: boolean) => {
-    if (action) {
-      // add 1 product
-      setProductsAndCustomer(prevVal => ({ ...prevVal, products: true }))
-    } else {
-      // remove 1 product
-      setProductsAndCustomer(prevVal => ({ ...prevVal, products: false }))
-    }
-    // modifiedForm(true);
-  };
-  const toggleAnimationForm = (open: boolean, callback?: Function) => {
+  const toggleAnimationForm = useCallback((open: boolean, callback?: Function) => {
     const formElement = document.querySelector("#budgetForm");
     if (open) {
       TweenMax.to(formElement, 0.3, {
         bottom: 0,
-        onComplete: () => {
-          if (number) {
-            setStateLoader(true);
-          }
-        }
+        onComplete: () => callback && callback()
       });
     } else {
       TweenMax.to(formElement, 0.3, {
@@ -94,11 +84,29 @@ export const BudgetForm = () => {
         }
       });
     }
-  };
-  const budgetCloseHandler = () => {
+  },[dispatch]);
+  const budgetClose = () => {
     toggleAnimationForm(false);
   };
-  const budgetSaveHandler = (confirmExit?: boolean) => {
+  const customert = (action?: boolean) => {
+    if (action) {
+      setProductsAndCustomer(prevVal => ({ ...prevVal, customer: true }));
+    } else {
+      setProductsAndCustomer(prevVal => ({ ...prevVal, customer: false }));
+    }
+    // modifiedForm(true);
+  };
+  const product = (action?: boolean) => {
+    if (action) {
+      // add 1 product
+      setProductsAndCustomer(prevVal => ({ ...prevVal, products: true }))
+    } else {
+      // remove 1 product
+      setProductsAndCustomer(prevVal => ({ ...prevVal, products: false }))
+    }
+    // modifiedForm(true);
+  };
+  const budgetSave = (confirmExit?: boolean) => {
     setStateLoader(true);
     if (confirmExit) {
       console.log("Confirmar, Salvar alterações e sair");
@@ -106,37 +114,80 @@ export const BudgetForm = () => {
       console.log("Salvar alterações");
     }
   };
-  const budgetNewFormHandler = () => {
+  const budgetNewForm = () => {
     console.log("Novo orçamento");
   };
-  const budgetDeleteHandler = () => {
+  const budgetDelete = () => {
     console.log("Excluir orçamento");
   };
-  const budgetPdfHandler = () => {
+  const budgetPdf = () => {
     console.log("Gerar PDF do orçamento");
   };
-  const budgetModifiedHandler = () => {
-    console.log("Orçamento modificado!");
+  const checkExpiredBudget = () => {
+    console.log("Verificar e alertar orçamento expirado");
   };
+  /* const contentModified = () => {
+    console.log("Orçamento modificado!");
+  }; */
   const calculateBudget = () => {
     console.log('atualizar calculos!');
   };
-  const calculateProduct = () => {
+ /*  const calculateProduct = () => {
     // calculate single line
     // calculate all lines
     // mount updated json list
     // update budget value
     calculateBudget();
+  }; */
+  const inputBudgetData = (keyData: object, debounce?: boolean) => {
+    if(debounce) {
+      debounceFunction.current(() => {
+        setBudgetData((oldState: any) => ({
+          ...oldState, ...keyData
+        }))
+      });
+    } else {
+      setBudgetData((oldState: any) => ({
+        ...oldState, ...keyData
+      }));
+    }
+  };
+  const loadBudgetDataFromDB = () => {
+    setStateLoader(true);
+
+    // load  from DB
+    setTimeout(() => {
+      if(Object.keys(mockBudget).length) {
+        // setExistResultBudget(true);
+        setBudgetData(mockBudget);
+        
+        // populate form
+        (document.getElementById("shippingTime") as HTMLInputElement).value = mockBudget.os_delivery || "";
+        (document.getElementById("shippingPrice") as HTMLInputElement).value = formatValue("toMoney", `${budgetData.os_deliveryprice}`) || "0.00";
+        (document.getElementById("customerContactName") as HTMLInputElement).value = mockBudget.os_att || "";
+        (document.getElementById("feedbackNotes") as HTMLInputElement).value = mockBudget.os_feedback || "";
+        (document.getElementById("percentDiscount") as HTMLInputElement).value = mockBudget.os_discount || "";
+        (document.getElementById("parcelTimes") as HTMLInputElement).value = formatValue("toNumber", `${budgetData.os_parcel}`) || "";
+        (document.getElementById("percentTax") as HTMLInputElement).value = mockBudget.os_jurosparcel || "";
+        (document.getElementById("paymentMode") as HTMLInputElement).value = mockBudget.os_faturado || "";
+
+        checkExpiredBudget();
+      } else {
+        // setExistResultBudget(false);
+      }
+      
+      setStateLoader(false);
+    }, 800);
   };
 
   Mousetrap.bind(["ctrl+n", "ctrl+s", "ctrl+shift+s", "ctrl+q"], function(e) {
     if (e.ctrlKey && !e.shiftKey && e.code === "KeyS") {
       if (!locked && open && modified) {
-        debounceFunction.current(() => budgetSaveHandler());
+        debounceFunction.current(() => budgetSave());
       }
     } else if (e.ctrlKey && e.shiftKey && e.code === "KeyS") {
       if (!locked && open && modified) {
-        debounceFunction.current(() => budgetSaveHandler(true));
+        debounceFunction.current(() => budgetSave(true));
       }
     } else if (e.ctrlKey && e.code === "KeyN") {
       if (!locked && open && modified) {
@@ -152,7 +203,7 @@ export const BudgetForm = () => {
       }
     } else if (e.ctrlKey && e.code === "KeyQ") {
       if (!locked && open && !modified) {
-        budgetCloseHandler();
+        budgetClose();
       } else if (!locked && open && modified) {
         console.log("salvar antes de sair?");
       }
@@ -161,11 +212,21 @@ export const BudgetForm = () => {
 
   useEffect(() => {
     if (open) {
-      toggleAnimationForm(open);
-      productHandler();
-      customertHandler();
+      toggleAnimationForm(open, () => {
+        if (number) {
+          loadBudgetDataFromDB();
+        }
+      });
     }
-  }, [open]);
+
+    // unmount component
+    return () => {
+      product();
+      customert();
+      // setStatusSelect("0");
+      setBudgetData({});
+    }
+  }, [open, number, toggleAnimationForm]);
 
   return (
     open && (
@@ -173,7 +234,7 @@ export const BudgetForm = () => {
         <BudgetFormBody id="budgetForm">
           {/* Close button */}
           <ToolTip placement="bottom" content="Fechar: ( CTRL+Q )">
-            <BtnCloseForm onClick={() => budgetCloseHandler()}>
+            <BtnCloseForm onClick={() => budgetClose()}>
               <IconButton icon={<Icon icon="close" />} circle size="xs" />
             </BtnCloseForm>
           </ToolTip>
@@ -186,36 +247,86 @@ export const BudgetForm = () => {
           )}
 
           {/* HEADER */}
-          <HeaderForm>
+          <HeaderForm 
+            bgColor={statusBackgroundColors(parseInt(budgetData.os_status))}
+            txtColor={statusTextColors(parseInt(budgetData.os_status))}
+          >
             <WaterIcon>
-              <Icon icon="file" />
+              <Icon icon={statusIcons(parseInt(budgetData.os_status))} />
             </WaterIcon>
 
             <LeftBlockInfo>
-              <p className="customer-name">------</p>
-              <p className="customer-contact">
-                Contato: <b>------</b>
+              <p className="customer-name">
+                {
+                  Object.keys(budgetData).length && budgetData.os_customer_data ? 
+                  budgetData.os_customer_data.cust_razao : '------'
+                }
               </p>
               <p className="customer-contact">
-                E-mail: <b>------</b>
+                Contato: {" "}
+                <b>
+                  {
+                    Object.keys(budgetData).length && budgetData.os_att ? 
+                    budgetData.os_att : '------'
+                  }  
+                </b>
               </p>
               <p className="customer-contact">
-                Telefones: <b>------</b>
+                E-mail: {" "}
+                <b>
+                  {
+                    Object.keys(budgetData).length && budgetData.os_customer_data ? 
+                    budgetData.os_customer_data.cust_email : '------'
+                  }
+                </b>
+              </p>
+              <p className="customer-contact">
+                Telefones: {" "}
+                <b>
+                  {
+                    Object.keys(budgetData).length && budgetData.os_customer_data ? 
+                    `${budgetData.os_customer_data.cust_phone} / ${budgetData.os_customer_data.cust_cellphone}` : '------'
+                  }
+                </b>
               </p>
             </LeftBlockInfo>
 
             <RightBlockInfo>
               <p className="os-number">
-                OS Número: <b>{number || "-----"}</b>
+                OS Número:  {" "}
+                <b>
+                  {
+                    Object.keys(budgetData).length && budgetData.os_number ? 
+                    budgetData.os_number : '------'
+                  }
+                </b>
               </p>
               <p className="os-date">
-                Criado em: <b>--/--/----</b>
+                Criado em: {" "} 
+                <b>
+                  {
+                    Object.keys(budgetData).length && budgetData.os_emit ? 
+                    calendarDate(undefined, undefined, budgetData.os_emit, "L")  : '--/--/----'
+                  }
+                </b>
               </p>
               <p className="os-status">
-                Status: <b>Rascunho</b>
+                Status: {" "}
+                <b>
+                {
+                  Object.keys(budgetData).length && budgetData.os_status ? 
+                  statusNames(parseInt(budgetData.os_status)) : 'Rascunho'
+                }
+                </b>
               </p>
               <p className="os-value">
-                Total Bruto: <b>R$ 0,00</b>
+                Total Bruto: {" "}
+                <b>
+                  R$ {
+                  Object.keys(budgetData).length && budgetData.os_totalbruto ? 
+                  formatValue('toMoney', budgetData.os_totalbruto)  : '0,00'
+                }
+                </b>
               </p>
             </RightBlockInfo>
           </HeaderForm>
@@ -227,12 +338,19 @@ export const BudgetForm = () => {
                 {/* LINE 1 - status, and dates */}
                 <Row className="row-form">
                   <Col xs={24} sm={24} md={8}>
-                    <InputTextPicker 
-                      id="satusBudget"
+                    <InputSelectPicker 
+                      id="statusBudget"
                       label="Status"
                       placeholder="Selecione ..."
                       required
+                      cleanable={false}
                       data={selectData}
+                      searchable={false}
+                      onChange={(ev: any) => {
+                        inputBudgetData({os_status: ev});
+                      }}
+                      value={budgetData.os_status || "5"}
+                      disabledItemValues={budgetData.os_number ? ["5"] : ["0"]}
                     />
                   </Col>
                   <Col xs={24} sm={24} md={8}>
@@ -242,6 +360,7 @@ export const BudgetForm = () => {
                       required
                       format="DD/MM/YYYY"
                       placeholder="DD/MM/YYYY"
+                      value={ budgetData.os_emit || dateNow}
                       disabled
                     />
                   </Col>
@@ -252,6 +371,7 @@ export const BudgetForm = () => {
                       required
                       format="DD/MM/YYYY"
                       placeholder="DD/MM/YYYY"
+                      value={ budgetData.os_update || dateNow}
                       disabled
                     />
                   </Col>
@@ -266,6 +386,12 @@ export const BudgetForm = () => {
                       required
                       format="DD/MM/YYYY"
                       placeholder="Selecione ..."
+                      onChangeCalendarDate={(val: any) => {
+                        inputBudgetData({
+                          os_expire: calendarDate(undefined, undefined, val, "YYYY-MM-DD HH:mm:ss")
+                        });
+                      }}
+                      value={ budgetData.os_expire || null}
                       oneTap
                       cleanable={false}
                     />
@@ -276,6 +402,9 @@ export const BudgetForm = () => {
                       label="Frete / Prazo" 
                       tip="( Ex: De 1 a 10 dias )" 
                       placeholder="Digite ..." 
+                      onChange={(ev: any) => {
+                        inputBudgetData({os_delivery: ev}, true);
+                      }}
                     />
                   </Col>
                   <Col xs={24} sm={24} md={8}>
@@ -284,6 +413,12 @@ export const BudgetForm = () => {
                       label="Valor do Frete" 
                       tip="( R$ )" 
                       placeholder="Digite ..." 
+                      onChange={(ev: any) => {
+                        inputMask("toMoney", "#shippingPrice");
+                        inputBudgetData({
+                          os_deliveryprice: formatValue("toMoney", `${ev}`, {toSave: true})
+                        }, true);
+                      }}
                     />
                   </Col>
                 </Row>
@@ -339,7 +474,7 @@ export const BudgetForm = () => {
                               size="sm"
                               color="red"
                               style={{ marginLeft: '10px', position: 'relative', top: '3px' }}
-                              onClick={() => customertHandler()}
+                              onClick={() => customert()}
                             />
                           </ToolTip>
                         </Col>
@@ -357,7 +492,7 @@ export const BudgetForm = () => {
                         size="sm"
                         color="cyan"
                         appearance="primary"
-                        onClick={() => customertHandler(true)}
+                        onClick={() => customert(true)}
                       >
                         <Icon icon="group" /> Adicionar Cliente
                       </Button>
@@ -370,11 +505,14 @@ export const BudgetForm = () => {
                 <Row className="row-form">
                   <Col xs={24} sm={24} md={24}>
                     <InputText 
-                      id="shippingPrice"
+                      id="customerContactName"
                       label="Nome do Contato / Cliente" 
                       tip="( Será visível na folha )" 
                       placeholder="Digite ..." 
                       style={{width: "97%"}} 
+                      onChange={(ev: any) => { 
+                        inputBudgetData({os_att: ev}, true);
+                      }}
                     />
                   </Col>
                 </Row>
@@ -389,6 +527,9 @@ export const BudgetForm = () => {
                       tip="( Não será visível na folha )" 
                       placeholder="Digite ..." 
                       style={{width: "97%", height: 150}}
+                      onChange={(ev: any) => { 
+                        inputBudgetData({os_feedback: ev}, true);
+                      }}
                     />
                   </Col>
                 </Row>
@@ -444,7 +585,7 @@ export const BudgetForm = () => {
                                   size="sm" placeholder="0,00"
                                   style={{ width: 130 }}
                                   onChange={(eValue) => {
-                                    // currencyFormat('#prodID', eValue);
+                                    inputMask("toMoney", '#prodID');
                                     // calculateProduct(currencyFormat('#prodID', eValue, true));
                                   }}
                                 />
@@ -459,7 +600,7 @@ export const BudgetForm = () => {
                                   placeholder="0"
                                   style={{ width: 60 }}
                                   onChange={(ev) => {
-                                    // numberFormat('#prodQtId', ev);
+                                    inputMask("toNumber", '#prodQtId');
                                     // calculateProduct(ev);
                                   }}
                                 />
@@ -486,7 +627,7 @@ export const BudgetForm = () => {
                                   circle size="xs"
                                   color="red"
                                   style={{ marginLeft: '10px', position: 'relative', top: '3px' }}
-                                  onClick={() => productHandler()}
+                                  onClick={() => product()}
                                 />
                               </ToolTip>
                             </Col>
@@ -498,7 +639,7 @@ export const BudgetForm = () => {
                           color="cyan"
                           size="sm"
                           style={{ marginTop: 30 }}
-                          onClick={() => productHandler(true)}
+                          onClick={() => product(true)}
                         >
                           <Icon icon="barcode" /> Adicionar Produto à Lista
                         </Button>
@@ -527,7 +668,7 @@ export const BudgetForm = () => {
                         size="sm"
                         appearance="primary"
                         color="cyan"
-                        onClick={() => productHandler(true)}
+                        onClick={() => product(true)}
                       >
                         <Icon icon="barcode" /> Adicionar Produto
                       </Button>
@@ -544,6 +685,9 @@ export const BudgetForm = () => {
                       label="Descontos %" 
                       tip="( Pagamentos á vista )" 
                       placeholder="Porcentagem ..." 
+                      onChange={(ev: any) => { 
+                        inputBudgetData({os_discount: ev}, true);
+                      }}
                     />
                   </Col>
                   <Col xs={24} sm={24} md={8}>
@@ -551,6 +695,10 @@ export const BudgetForm = () => {
                       id="parcelTimes"
                       label="Parcelamento X" 
                       placeholder="Apenas números ..." 
+                      onChange={(ev: any) => {
+                        inputMask("toNumber", "#parcelTimes");
+                        inputBudgetData({os_parcel: ev}, true);
+                      }}
                     />
                   </Col>
                   <Col xs={24} sm={24} md={8}>
@@ -558,6 +706,9 @@ export const BudgetForm = () => {
                       id="percentTax"
                       label="Taxa Adicional %" 
                       placeholder="Porcentagem ..." 
+                      onChange={(ev: any) => { 
+                        inputBudgetData({os_jurosparcel: ev}, true);
+                      }}
                     />
                   </Col>
                 </Row>
@@ -572,10 +723,13 @@ export const BudgetForm = () => {
                       tip="( Será visível na folha )" 
                       placeholder="Digite ..." 
                       style={{width: "97%", height: 100}}
+                      onChange={(ev: any) => { 
+                        inputBudgetData({os_faturado: ev}, true);
+                      }}
                     />
-                    <br />
-                    </Col>
-                    <Col xs={24} sm={24} md={24}>
+                  <br />
+                  </Col>
+                  <Col xs={24} sm={24} md={24}>
                       <div className="input-container">
                         <p style={{ width: '30%', textAlign: 'right', float: 'right', marginRight: 25 }}>
                           <Button appearance="default" onClick={() => calculateBudget()}>
@@ -587,7 +741,13 @@ export const BudgetForm = () => {
                             <small>* Taxa Adicional será calculada sobre o valor BRUTO!</small><br />
                             <small>** O Desconto será aplicado sobre o valor, COM OU SEM A TAXA ADICIONAL!</small><br />
                             <small>*** Sempre Salve as Alterações Antes de Visualizar e Imprimir o Orçamento!</small><br /><br /><br />
-                            <small style={{ color: '#C04544', fontSize: '12px' }}>( Orçamento emitido pelo usuário <b>"NOME USUARIO"</b> )</small><br />
+                            {
+                              budgetData.os_user_name && 
+                              <small style={{ color: '#C04544', fontSize: '12px' }}>
+                                ( Orçamento emitido pelo usuário <b>"{budgetData.os_user_name}"</b> )
+                              </small>
+                            }
+                            <br />
                           </em>
                         </p>
                       </div>
@@ -606,7 +766,7 @@ export const BudgetForm = () => {
                 appearance="subtle"
                 disabled={number ? false : true}
                 onClick={() => {
-                  budgetPdfHandler();
+                  budgetPdf();
                 }}
               >
                 <Icon icon="external-link" /> Exporta em PDF
@@ -617,7 +777,7 @@ export const BudgetForm = () => {
                 appearance="subtle"
                 disabled={number ? false : true}
                 onClick={() => {
-                  budgetDeleteHandler();
+                  budgetDelete();
                 }}
               >
                 <Icon icon="trash" /> Excluir
@@ -628,7 +788,7 @@ export const BudgetForm = () => {
                   color="cyan"
                   appearance="subtle"
                   disabled={modified || number ? false : true}
-                  onClick={() => budgetNewFormHandler()}
+                  onClick={() => budgetNewForm()}
                 >
                   <Icon icon="pencil" /> Novo
                 </Button>
@@ -644,7 +804,7 @@ export const BudgetForm = () => {
                   id="saveExitBudget"
                   color="green"
                   appearance="subtle"
-                  onClick={() => budgetSaveHandler(true)}
+                  onClick={() => budgetSave(true)}
                   disabled={!modified ? true : false}
                 >
                   <Icon icon="sign-out" /> Salvar e Sair
@@ -655,7 +815,7 @@ export const BudgetForm = () => {
                   id="saveBudget"
                   color="green"
                   appearance="subtle"
-                  onClick={() => budgetSaveHandler()}
+                  onClick={() => budgetSave()}
                   disabled={!modified ? true : false}
                 >
                   <Icon icon="check-circle" /> Salvar
@@ -663,6 +823,7 @@ export const BudgetForm = () => {
               </ToolTip>
             </div>
           </FooterForm>
+        
         </BudgetFormBody>
       </BudgetFormContainer>
     )

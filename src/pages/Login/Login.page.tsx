@@ -3,8 +3,8 @@ import { History } from "history";
 import { Button, Input, Icon } from "rsuite";
 import { TweenMax, Back } from "gsap/TweenMax";
 import { DisplayLoginPage } from "./Login.styles";
-import logoBR from "../../assets/images/logo_icon.png";
-import  { keypressType } from '../../_core/helpers/keypressType';
+import logoBR from "assets/images/logo_icon.png";
+import  { keypressType } from '_core/helpers/keypressType';
 
 /* Electron API */
 const windowAppObj = window as any;

@@ -1,4 +1,4 @@
-import { TOGGLE_SEARCH, RESULT_SEARCH, SearchAction, SearchStore } from "../types";
+import { TOGGLE_SEARCH, RESULT_SEARCH, SearchAction, SearchStore } from "_core/redux/types";
 
 const searchState: SearchStore = {
   data: {

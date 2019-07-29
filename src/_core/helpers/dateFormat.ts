@@ -21,6 +21,7 @@ interface Calendar {
     ll: string;
     lll: string;
     llll: string;
+    "YYYY-MM-DD HH:mm:ss": "YYYY-MM-DD HH:mm:ss";
   };
 }
 

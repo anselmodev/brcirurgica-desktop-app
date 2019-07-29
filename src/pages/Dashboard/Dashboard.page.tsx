@@ -1,8 +1,8 @@
 import React from "react";
 import { Icon } from "rsuite";
 import { DisplayDashboardPage } from "./Dashboard.styles";
-import { BudgetList } from "../../components/ListItems/BudgetList";
-import mockList from "../../mockData/mockList.json";
+import { BudgetList } from "components/ListItems/BudgetList";
+import mockList from "mockData/mockList.json";
 
 interface PropsDashboardPage {
   toggleChartHandler: Function;

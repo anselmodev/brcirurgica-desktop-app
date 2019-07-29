@@ -1,4 +1,4 @@
-import { DATA_CHART, ChartAction, ChartStore } from "../types";
+import { DATA_CHART, ChartAction, ChartStore } from "_core/redux/types";
 
 const pageState: ChartStore = {
   data: {

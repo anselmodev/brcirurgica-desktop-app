@@ -1,6 +1,6 @@
-import { PageAction, SET_PAGE_ROUTE, PageStore } from "../types";
+import { PageAction, SET_PAGE_ROUTE, PageStore } from "_core/redux/types";
 import qs from "qs";
-import { parseHash } from "../../helpers/parseHash";
+import { parseHash } from "_core/helpers/parseHash";
 
 const pageState: PageStore = {
   data: { title: "", url: "", param: {}, hash: [] }

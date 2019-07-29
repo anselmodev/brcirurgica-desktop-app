@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Tooltip, Whisper, Popover, Button } from "rsuite";
+import React from "react";
+import { Tooltip, Whisper, Popover } from "rsuite";
 
 interface PropsTooltipPopover {
   placement?:

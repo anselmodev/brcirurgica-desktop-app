@@ -2,13 +2,13 @@ import React, { useEffect } from "react";
 import { History } from "history";
 import { useDispatch } from "react-redux";
 import LoginPage from "./Login.page";
-import { appInfo } from "../../_core/config/constants";
+import { appInfo } from "_core/config/constants";
 import {
   setLoginAction,
   setPageAction,
   modalDialogAction
-} from "../../_core/redux/actions";
-import { getLogin, setLogin } from "../../_core/config/login.conf";
+} from "_core/redux/actions";
+import { getLogin, setLogin } from "_core/config/login.conf";
 
 type Props = {
   history: History;

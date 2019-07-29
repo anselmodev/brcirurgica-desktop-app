@@ -9,13 +9,15 @@ import {
   CellLine,
   CellLineStatus
 } from "./styles";
-import { calendarDate } from "../../../_core/helpers/dateFormat";
-import { formatValue } from "../../../_core/helpers/formatNumber";
-import { statusNames, statusColors } from "../../../_core/helpers/statusProps";
-import { Paginator } from "../../Paginator";
-import { ToolTip } from "../../ToolTip";
-import { toggleBudgetAction } from "../../../_core/redux/actions";
-
+import {
+  statusNames,
+  statusBackgroundColors,
+  calendarDate,
+  formatValue
+} from "_core/helpers";
+import { Paginator } from "components/Paginator";
+import { ToolTip } from "components/ToolTip";
+import { toggleBudgetAction } from "_core/redux/actions";
 
 interface PropsBudgetList {
   dataItems: any[];
@@ -39,7 +41,7 @@ const generatePDFHandler = (numberOS: number) => {
 
 export const BudgetList = (props: PropsBudgetList) => {
   const dispatch = useDispatch();
-  
+
   const openBudgetHandler = (numberOS: number) => {
     dispatch(
       toggleBudgetAction({
@@ -84,7 +86,7 @@ export const BudgetList = (props: PropsBudgetList) => {
                     <span className="cell-coll5">
                       R$ {formatValue("toMoney", props.totalPrice)}
                     </span>
-                    <CellLineStatus color={statusColors(props.status)}>
+                    <CellLineStatus color={statusBackgroundColors(props.status)}>
                       <em>{statusNames(props.status)}</em>
                     </CellLineStatus>
                   </span>

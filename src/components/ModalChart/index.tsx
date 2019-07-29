@@ -3,11 +3,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { TweenMax, Back } from "gsap/TweenMax";
 import { IconButton, Icon, Loader } from "rsuite";
 import { ModalChartContainer, BoxChart } from "./styles";
-import { chartAction } from "../../_core/redux/actions";
-import { getElementPosition, getElementDimensions } from "../../_core/helpers";
-import { ToolTip } from "../ToolTip";
+import { chartAction } from "_core/redux/actions";
+import { getElementPosition, getElementDimensions } from "_core/helpers";
+import { ToolTip } from "components/ToolTip";
 import  { BarsChartContainer } from './BarsInfo';
-import chartsDataDB from "../../mockData/chart.json";
+import chartsDataDB from "mockData/mockChart.json";
 
 interface PropsAnimationChart {
   element: string;

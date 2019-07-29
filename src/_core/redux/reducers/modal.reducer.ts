@@ -2,7 +2,7 @@ import {
   TOGGLE_MODAL_DIALOG,
   ModalDialogAction,
   ModalDialogStore
-} from "../types";
+} from "_core/redux/types";
 
 const modalState: ModalDialogStore = {
   data: {

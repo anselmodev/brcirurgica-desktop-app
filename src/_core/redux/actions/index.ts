@@ -17,7 +17,7 @@ import {
   LockScreenAction,
   SearchAction,
   BudgetAction
-} from "../types";
+} from "_core/redux/types";
 
 export function setLoginAction(payload: LoginAction["payload"]) {
   return {

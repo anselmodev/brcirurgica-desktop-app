@@ -5,7 +5,7 @@ import {
   SYSTEM_FILES,
   readFile,
   writeFile
-} from "../helpers";
+} from "_core/helpers";
 const windowAppObj = window as any;
 const fs = windowAppObj.require("fs");
 

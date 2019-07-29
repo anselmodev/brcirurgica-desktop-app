@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { BackgroundAppContainer } from "./styles";
-import Logo from "../../assets/images/logo_icon.png";
+import Logo from "assets/images/logo_icon.png";
 
 export const BackgroundApp = () => {
   return (

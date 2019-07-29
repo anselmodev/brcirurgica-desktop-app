@@ -3,8 +3,8 @@ import { History } from "history";
 import { useDispatch } from "react-redux";
 import DashboardPage from "./Dashboard.page";
 import { setPageAction, chartAction } from "../../_core/redux/actions";
-import { appInfo } from "../../_core/config/constants";
-import { ModalChart } from "../../components/ModalChart";
+import { appInfo } from "_core/config/constants";
+import { ModalChart } from "components/ModalChart";
 
 
 interface Props {

@@ -16,10 +16,10 @@ import {
   lockScreenAction,
   toggleSearchAction,
   toggleBudgetAction
-} from "../../_core/redux/actions";
-import logoIcon from "../../assets/images/logo_icon.png";
+} from "_core/redux/actions";
+import logoIcon from "assets/images/logo_icon.png";
+import { setLogout } from "_core/config/login.conf";
 import { menuItems } from "./menuItems";
-import { setLogout } from "../../_core/config/login.conf";
 
 type Props = {
   history: History;

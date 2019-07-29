@@ -40,14 +40,15 @@ export const Preloader = styled.div`
   }
 `;
 
-export const HeaderForm = styled.div<{ color?: any }>(({ color }) => ({
+export const HeaderForm = styled.div<{ bgColor?: any, txtColor?: any }>(({ bgColor, txtColor }) => ({
   width: "100%",
   height: 160,
   position: "absolute",
   top: 0,
   left: 0,
   borderRadius: "6px 6px 0 0",
-  backgroundColor: color ? color : "#CCCACA",
+  backgroundColor: bgColor ? bgColor : "#CCCACA",
+  color:  txtColor ? txtColor : "#575757",
   zIndex: 3
 }));
 
@@ -90,7 +91,7 @@ export const LeftBlockInfo = styled.div`
     :hover {
       transform: scale(0.95);
       cursor: pointer;
-      color: #333333;
+      opacity: 0.7;
     }
   }
   .customer-contact {

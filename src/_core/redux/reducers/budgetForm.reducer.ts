@@ -1,11 +1,10 @@
-import { TOGGLE_BUDGET_FORM, RESULT_BUDGET_FORM, BudgetAction, BudgetStore } from "../types";
+import { TOGGLE_BUDGET_FORM, RESULT_BUDGET_FORM, BudgetAction, BudgetStore } from "_core/redux/types";
 
 const budgetState: BudgetStore = {
   data: {
     open: false,
     number: null,
     modified: false,
-    result: []
   }
 };
 
@@ -19,7 +18,6 @@ export function reducerBudgetForm(state = budgetState, action: BudgetAction) {
           open: action.payload.open || false,
           number: action.payload.number || null,
           modified: action.payload.modified || false,
-          result: action.payload.result || []
         }
       };
     case RESULT_BUDGET_FORM:
@@ -29,7 +27,6 @@ export function reducerBudgetForm(state = budgetState, action: BudgetAction) {
           ...state.data,
           number: action.payload.number || state.data.number,
           modified: action.payload.modified || state.data.modified,
-          result: action.payload.result || state.data.result
         }
       };
     default:

@@ -5,9 +5,9 @@ import * as _ from "lodash";
 import { Input, InputGroup, Icon, Button, Loader } from "rsuite";
 import Mousetrap from "mousetrap";
 import { SearchContainer } from "./styles";
-import { ToolTip, PopOver } from "../ToolTip";
-import { toggleSearchAction, resultSearchAction } from "../../_core/redux/actions";
-import { calendarDate } from "../../_core/helpers/dateFormat";
+import { ToolTip, PopOver } from "components/ToolTip";
+import { toggleSearchAction, resultSearchAction } from "_core/redux/actions";
+import { calendarDate } from "_core/helpers/dateFormat";
 
 type Props = {
   history: History;

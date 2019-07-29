@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect } from "react";
 import { TweenMax, Back } from "gsap/TweenMax";
 import { BarsContainer, BarItem } from "./styles";
-import { ToolTip } from "../ToolTip";
+import { ToolTip } from "components/ToolTip";
 import { Icon } from "rsuite";
 
 interface PropsBarInfo {

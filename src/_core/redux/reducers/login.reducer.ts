@@ -1,4 +1,4 @@
-import { LoginAction, SET_LOGIN, LoginStore } from "../types";
+import { LoginAction, SET_LOGIN, LoginStore } from "_core/redux/types";
 
 const pageState: LoginStore = {
   data: { user: "", password: "", dateLogin: "", expireOn: "" }

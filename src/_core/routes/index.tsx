@@ -1,10 +1,10 @@
 import React, { Fragment } from "react";
-import  LoginPageContainer from '../../pages/Login/Login.container';
-import  DashboardPageContainer from '../../pages/Dashboard/Dashboard.container';
-import  BudgetListContainer from '../../pages/BudgetList/BudgetList.container';
-import { Sidebar } from "../../components/Sidebar";
-import { LockScreen } from "../../components/LockScreen";
-import { Search } from "../../components/Search";
+import  LoginPageContainer from 'pages/Login/Login.container';
+import  DashboardPageContainer from 'pages/Dashboard/Dashboard.container';
+import  BudgetListContainer from 'pages/BudgetList/BudgetList.container';
+import { Sidebar } from "components/Sidebar";
+import { LockScreen } from "components/LockScreen";
+import { Search } from "components/Search";
 
 interface Props {
   complementComponents?: object;

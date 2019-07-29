@@ -1,4 +1,4 @@
-import { TOGGLE_SIDEBAR, SidebarAction, SidebarStore } from "../types";
+import { TOGGLE_SIDEBAR, SidebarAction, SidebarStore } from "_core/redux/types";
 
 const pageState: SidebarStore = {
   data: {

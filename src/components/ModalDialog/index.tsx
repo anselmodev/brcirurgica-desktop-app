@@ -2,8 +2,8 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Modal, Button, Icon } from "rsuite";
 import { ModalDialogBg, IconModal } from "./styles";
-import { audioPlayer } from "../../_core/helpers/audioPlayer";
-import { modalDialogAction } from "../../_core/redux/actions";
+import { audioPlayer } from "_core/helpers/audioPlayer";
+import { modalDialogAction } from "_core/redux/actions";
 import {
   modalBg,
   modalIcon,

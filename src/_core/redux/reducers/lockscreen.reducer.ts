@@ -1,4 +1,4 @@
-import { TOGGLE_LOCK_SCREEN, LockScreenAction, LockScreenStore } from "../types";
+import { TOGGLE_LOCK_SCREEN, LockScreenAction, LockScreenStore } from "_core/redux/types";
 
 const lockScreenState: LockScreenStore = {
   data: {

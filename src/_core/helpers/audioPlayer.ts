@@ -1,11 +1,11 @@
-import confirmAudio from '../../assets/audio/confirm.mp3';
-import bellAudio from '../../assets/audio/bell.wav';
-import moneyAudio from '../../assets/audio/money.wav';
-import pop1Audio from '../../assets/audio/pop-1.wav';
-import pop2Audio from '../../assets/audio/pop-2.wav';
-import error from '../../assets/audio/error1.mp3';
-import open from '../../assets/audio/open.mp3';
-import success from '../../assets/audio/success.mp3';
+import confirmAudio from 'assets/audio/confirm.mp3';
+import bellAudio from 'assets/audio/bell.wav';
+import moneyAudio from 'assets/audio/money.wav';
+import pop1Audio from 'assets/audio/pop-1.wav';
+import pop2Audio from 'assets/audio/pop-2.wav';
+import error from 'assets/audio/error1.mp3';
+import open from 'assets/audio/open.mp3';
+import success from 'assets/audio/success.mp3';
 
 type TypeAudio = {
     bell: string;

@@ -1,4 +1,4 @@
-import { SYSTEM_PATHS, SYSTEM_FILES, readFile, writeFile } from "../helpers";
+import { SYSTEM_PATHS, SYSTEM_FILES, readFile, writeFile } from "_core/helpers";
 const windowAppObj = window as any;
 const fs = windowAppObj.require("fs");
 

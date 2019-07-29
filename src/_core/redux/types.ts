@@ -130,7 +130,6 @@ export interface BudgetStore {
     open: boolean;
     number: number | null;
     modified: boolean;
-    result: object[]
   };
 }
 export interface BudgetAction {
@@ -139,6 +138,5 @@ export interface BudgetAction {
     open?: boolean;
     number?: number;
     modified?: boolean;
-    result?: object[]
   };
 }
