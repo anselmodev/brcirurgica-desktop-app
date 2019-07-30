@@ -7,17 +7,30 @@ interface ConvertTo {
 }
 
 interface OptionsVMasker {
-    toSave?: boolean;
-    precision?: number;
-    separator?: string;
-    delimiter?: string;
-    unit?: string;
-    suffixUnit?: string;
-    zeroCents?: boolean;
+  toSave?: boolean;
+  precision?: number;
+  separator?: string;
+  delimiter?: string;
+  unit?: string;
+  suffixUnit?: string;
+  zeroCents?: boolean;
 }
 
 const _getDomElement = (elementNode: any) => {
   return document.querySelector(elementNode);
+};
+
+const _fixDecimal = (value: number | string) => {
+  const stringValue = value.toString();
+  const splitvalue = stringValue.split(".")[1];
+
+  if (splitvalue && splitvalue.length === 0) {
+    return `${value.toString()}00`;
+  } else if (splitvalue && splitvalue.length === 1 ) {
+    return `${value.toString()}0`;
+  } else {
+    return stringValue;
+  }
 };
 
 /**
@@ -41,7 +54,7 @@ export const inputMask = <C extends keyof ConvertTo>(
     VMasker(_getDomElement(inputClassId)).maskNumber();
   }
   if (convertTo === "toPattern") {
-    VMasker(_getDomElement(inputClassId)).maskPattern(paternMask || '');
+    VMasker(_getDomElement(inputClassId)).maskPattern(paternMask || "");
   }
 };
 
@@ -62,12 +75,15 @@ export const formatValue = <C extends keyof ConvertTo>(
   if (convertTo === "toMoney") {
     let convert;
 
-    if(optionsVMasker && optionsVMasker.toSave) {
-        convert = VMasker.toMoney(value, {...optionsVMasker, separator: '.'}).replace(/\./g, '');
-        return [convert.slice(0, -2), ".", convert.slice(-2)].join('');
+    if (optionsVMasker && optionsVMasker.toSave) {
+      convert = VMasker.toMoney(value, {
+        ...optionsVMasker,
+        separator: "."
+      }).replace(/\./g, "");
+      return _fixDecimal([convert.slice(0, -2), ".", convert.slice(-2)].join(""));
     } else {
-        convert = VMasker.toMoney(value, optionsVMasker);
-        return convert;
+      convert = VMasker.toMoney(_fixDecimal(value), optionsVMasker);
+      return convert;
     }
   }
   if (convertTo === "toNumber") {

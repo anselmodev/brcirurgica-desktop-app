@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useCallback } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { TweenMax } from "gsap/TweenMax";
 import { useDispatch, useSelector } from "react-redux";
 import * as _ from "lodash";
@@ -11,7 +11,9 @@ import {
   Grid,
   Row,
   Col,
-  Input
+  Input,
+  Toggle,
+  Checkbox
 } from "rsuite";
 import {
   BudgetFormContainer,
@@ -31,10 +33,10 @@ import {
   TableLineContainerTable
 } from "./styles";
 import {
-  // resultBudgetAction,
+  resultBudgetAction,
   toggleBudgetAction
 } from "_core/redux/actions";
-import { ToolTip } from "components/ToolTip";
+import { ToolTip, PopOver } from "components/ToolTip";
 import selectData from "components/Forms/jsonFiles/status-select.json";
 import  { InputText, InputDatePicker, InputSelectPicker } from '../inputElements';
 import  { 
@@ -44,69 +46,70 @@ import  {
   statusIcons, 
   statusTextColors, 
   statusBackgroundColors, 
-  calendarDate 
+  calendarDate
 } from '_core/helpers';
-
-import mockBudget  from 'mockData/mockSingleBudget.json';
 
 export const BudgetForm = () => {
   const dateNow = new Date();
-  const [budgetData, setBudgetData] = useState<any>({});
-  const [stateLoader, setStateLoader] = useState(false);
+  const [stateLoader, setStateLoader] = useState(false); // preloader
+  const [formModified, setFormModified] = useState(false);
   const [productsAndCustomer, setProductsAndCustomer] = useState({ customer: false, products: false });
-  const dispatch = useDispatch();
   const { locked } = useSelector((state: any) => state.lockScreen.data);
-  const { open, number, modified } = useSelector(
-    (state: any) => state.budget.data
-  );
-  const debounceFunction = useRef(
-    _.debounce((funcAction: Function) => funcAction(), 500)
-  );
+  const { open, number, dataBudget } = useSelector( (state: any) => state.budget.data );
+  const debounceFunction = useRef( _.debounce((funcAction: Function) => funcAction(), 500) );
+  const dispatch = useDispatch();
 
-  const toggleAnimationForm = useCallback((open: boolean, callback?: Function) => {
-    const formElement = document.querySelector("#budgetForm");
-    if (open) {
-      TweenMax.to(formElement, 0.3, {
-        bottom: 0,
-        onComplete: () => callback && callback()
-      });
-    } else {
-      TweenMax.to(formElement, 0.3, {
-        bottom: "-100%",
-        onComplete: () => {
-          callback && callback();
-          dispatch(
-            toggleBudgetAction({
-              open: false
-            })
-          );
-          setStateLoader(false);
-        }
-      });
-    }
-  },[dispatch]);
+  const toggleAnimationForm = (open: boolean, callback?: Function) => {
+      const formElement = document.querySelector("#budgetForm");
+
+      if (open) {
+        TweenMax.to(formElement, 0.3, {
+          bottom: 0,
+          onComplete: () => {
+            callback && callback();
+          }
+        });
+      } else {
+        TweenMax.to(formElement, 0.3, {
+          bottom: "-100%",
+          onComplete: () => {
+            callback && callback();
+            dispatch(
+              toggleBudgetAction({
+                open: false
+              })
+            );
+            setStateLoader(false);
+          }
+        });
+      }
+  };
   const budgetClose = () => {
     toggleAnimationForm(false);
   };
-  const customert = (action?: boolean) => {
+  const customerListExists = (action?: boolean) => {
     if (action) {
+      // pegar dados do cliente e popular no form
       setProductsAndCustomer(prevVal => ({ ...prevVal, customer: true }));
     } else {
+      // remover cliente do orçamento
       setProductsAndCustomer(prevVal => ({ ...prevVal, customer: false }));
     }
     // modifiedForm(true);
   };
-  const product = (action?: boolean) => {
+  const productListExists = (action?: boolean) => {
     if (action) {
-      // add 1 product
+      // pegar dados do produto e popular na lista,  atualizando os valores
       setProductsAndCustomer(prevVal => ({ ...prevVal, products: true }))
     } else {
-      // remove 1 product
+      // remover produto da lista, atualizando os valores
       setProductsAndCustomer(prevVal => ({ ...prevVal, products: false }))
     }
     // modifiedForm(true);
   };
   const budgetSave = (confirmExit?: boolean) => {
+    // se não existir número, gerar um número para o orçamento.
+    
     setStateLoader(true);
     if (confirmExit) {
       console.log("Confirmar, Salvar alterações e sair");
@@ -126,71 +129,190 @@ export const BudgetForm = () => {
   const checkExpiredBudget = () => {
     console.log("Verificar e alertar orçamento expirado");
   };
-  /* const contentModified = () => {
-    console.log("Orçamento modificado!");
-  }; */
   const calculateBudget = () => {
-    console.log('atualizar calculos!');
+    const getTotalProductsPrice = calculateTotalProductsPrice(dataBudget.os_products);
+    const getPriceDelivery = dataBudget.os_deliveryprice;
+    const getDiscountValue = dataBudget.os_discount;
+    const getParcelsNumber = dataBudget.os_parcel;
+    const getTaxValue = dataBudget.os_jurosparcel;
+
+    // from these variables:
+      // calculate total general
+      // calculate total with discount
+      // calculate tax price from total
+      // calculate parcel price from total
+      // calculate commission price from total general or from total with discount "os_commissiondef"
+
+      // SCHOW RESULTS ON BUDGET
+
+    console.log({
+      getTotalProductsPrice,
+      getPriceDelivery,
+      getDiscountValue,
+      getParcelsNumber,
+      getTaxValue
+    });
+
+
+    // dispatch(resultBudgetAction({
+    //   totalCalculate: {
+    //     totalGeneral: getTotalProductsPrice,
+    //     totalDiscount: getDiscountValue,
+    //     totalParcel: getParcelsNumber,
+    //     totalCommission: ""
+    //   }
+    // }));
+
   };
- /*  const calculateProduct = () => {
-    // calculate single line
-    // calculate all lines
-    // mount updated json list
-    // update budget value
-    calculateBudget();
-  }; */
-  const inputBudgetData = (keyData: object, debounce?: boolean) => {
-    if(debounce) {
-      debounceFunction.current(() => {
-        setBudgetData((oldState: any) => ({
-          ...oldState, ...keyData
-        }))
-      });
-    } else {
-      setBudgetData((oldState: any) => ({
-        ...oldState, ...keyData
-      }));
+  const calculateTotalProductsPrice = (listProducts: any) => {
+    if(listProducts && Object.keys(listProducts).length) {
+      return Object.keys(listProducts).map(
+        key => listProducts[key].list_totalprod
+        ).reduce((total, value) => {
+          return parseFloat((
+            Number(formatValue( "toMoney", total, {toSave: true} )) +
+            Number(formatValue( "toMoney", value, {toSave: true} ))
+          ).toString()).toFixed(2);;
+        });
     }
   };
-  const loadBudgetDataFromDB = () => {
-    setStateLoader(true);
+  const calculateProductQuantity = (idProdList: string | number) => {
+    debounceFunction.current(() => {
+      setFormModified(true);
 
-    // load  from DB
-    setTimeout(() => {
-      if(Object.keys(mockBudget).length) {
-        // setExistResultBudget(true);
-        setBudgetData(mockBudget);
-        
-        // populate form
-        (document.getElementById("shippingTime") as HTMLInputElement).value = mockBudget.os_delivery || "";
-        (document.getElementById("shippingPrice") as HTMLInputElement).value = formatValue("toMoney", `${budgetData.os_deliveryprice}`) || "0.00";
-        (document.getElementById("customerContactName") as HTMLInputElement).value = mockBudget.os_att || "";
-        (document.getElementById("feedbackNotes") as HTMLInputElement).value = mockBudget.os_feedback || "";
-        (document.getElementById("percentDiscount") as HTMLInputElement).value = mockBudget.os_discount || "";
-        (document.getElementById("parcelTimes") as HTMLInputElement).value = formatValue("toNumber", `${budgetData.os_parcel}`) || "";
-        (document.getElementById("percentTax") as HTMLInputElement).value = mockBudget.os_jurosparcel || "";
-        (document.getElementById("paymentMode") as HTMLInputElement).value = mockBudget.os_faturado || "";
+      const priceProduct = (document.getElementById(`prod-${idProdList}`) as HTMLInputElement).value;
+      const quantityProduct = (document.getElementById(`quant-${idProdList}`) as HTMLInputElement).value;
 
-        checkExpiredBudget();
-      } else {
-        // setExistResultBudget(false);
+      // calculate price from quantity
+      const calculateTotal = parseFloat(
+        (Number(formatValue( "toMoney", priceProduct, {toSave: true} )) * Number(quantityProduct)).toString()
+      ).toFixed(2);
+
+      // find index product from "os_products"
+      let findIndexProduct = _.findIndex(dataBudget.os_products, { 'list_idprod': `${idProdList}` });
+      
+      //update product data
+      const productUpdated = [
+        parseInt(findIndexProduct),
+        {
+          list_idprod: `${idProdList}`,
+          list_univalprod: `${formatValue( "toMoney", priceProduct, {toSave: true} )}`,
+          list_quantprod: Number(quantityProduct),
+          list_totalprod: calculateTotal
+        }
+      ];
+
+      dispatch(resultBudgetAction({
+        productQuantityUpdate: productUpdated
+      }));
+
+      // update total list values
+      (document.getElementById("sumListProd") as any).textContent = 
+      `R$  ${formatValue("toMoney", calculateTotalProductsPrice(dataBudget.os_products))}` || "0,00";
+
+      // updateCalc
+      (document.getElementById("btnUpdateCalc") as HTMLInputElement).click();
+    });
+  };
+  const inputBudgetData = (keyData: object, debounce?: boolean, updateCalc?: boolean) => {
+    if(debounce) {
+      debounceFunction.current(() => {
+        setFormModified(true);
+        dispatch(resultBudgetAction({
+          dataBudget: {
+            ...keyData
+          }
+        }));
+
+        if(updateCalc) {
+          (document.getElementById("btnUpdateCalc") as HTMLInputElement).click();
+        }
+      });
+    } else {
+      setFormModified(true);
+      dispatch(resultBudgetAction({
+        dataBudget: {
+          ...keyData
+        }
+      }));
+      if(updateCalc) {
+        (document.getElementById("btnUpdateCalc") as HTMLInputElement).click();
+      }
+    }
+  };
+  const populateForm = () => {
+    if(open) {
+      
+      (document.getElementById("shippingTime") as HTMLInputElement).value = dataBudget.os_delivery || "";
+      (document.getElementById("shippingPrice") as HTMLInputElement).value = formatValue("toMoney", `${dataBudget.os_deliveryprice}`) || "0.00";
+      (document.getElementById("customerContactName") as HTMLInputElement).value = dataBudget.os_att || "";
+      (document.getElementById("feedbackNotes") as HTMLInputElement).value = dataBudget.os_feedback || "";
+      (document.getElementById("percentDiscount") as HTMLInputElement).value = dataBudget.os_discount || "0";
+      (document.getElementById("parcelTimes") as HTMLInputElement).value = dataBudget.os_parcel || "0";
+      (document.getElementById("percentTax") as HTMLInputElement).value = dataBudget.os_jurosparcel || "0";
+      (document.getElementById("paymentMode") as HTMLInputElement).value = dataBudget.os_faturado || "";
+      
+      // custoemr data
+      if(dataBudget.os_customer_data) {
+        setProductsAndCustomer((oldState: any) => ({...oldState, customer: true}));
+      }
+  
+      // total value products list
+      if(dataBudget.os_products) {
+        setProductsAndCustomer((oldState: any) => ({...oldState, products: true}));
+        setTimeout(() => {
+          (document.getElementById("sumListProd") as any).textContent = 
+          `R$  ${formatValue("toMoney", calculateTotalProductsPrice(dataBudget.os_products))}` || "0,00";
+        }, 800);
       }
       
       setStateLoader(false);
-    }, 800);
+    }
+  };
+
+  const addRemoveCustomer = (type: 'add' | 'update' | 'remove') => {
+    if(type === "add") {
+      // open search and search customer
+      // from search, add customer selected.
+      // add customer on dataBudget.
+      // show customer line
+    } else if(type === "update") {  
+      // open search and search customer
+      // from search, add customer selected.
+      // update customer on dataBudget.
+    } else if(type === "remove") {  
+     // remove customer from dataBudget.
+      // hide customer line.
+    }
+  };
+  const addRemoveProduct = (type: 'add' | 'update' | 'remove') => {
+    if(type === "add") {
+      // open search and search products
+      // from search, add products selected.
+      // add products on dataBudget.
+      // show products line
+    } else if(type === "update") {  
+      // open search and search products
+      // from search, add products selected.
+      // update products on dataBudget.
+    } else if(type === "remove") {  
+      // remove produt from list
+      // remove products from dataBudget.
+      // if no have item on list, hide products line.
+    }
   };
 
   Mousetrap.bind(["ctrl+n", "ctrl+s", "ctrl+shift+s", "ctrl+q"], function(e) {
     if (e.ctrlKey && !e.shiftKey && e.code === "KeyS") {
-      if (!locked && open && modified) {
+      if (!locked && open && formModified) {
         debounceFunction.current(() => budgetSave());
       }
     } else if (e.ctrlKey && e.shiftKey && e.code === "KeyS") {
-      if (!locked && open && modified) {
+      if (!locked && open && formModified) {
         debounceFunction.current(() => budgetSave(true));
       }
     } else if (e.ctrlKey && e.code === "KeyN") {
-      if (!locked && open && modified) {
+      if (!locked && open && formModified) {
         console.log("salvar entes de um novo orçamento?");
       } else if (!locked) {
         debounceFunction.current(() =>
@@ -202,9 +324,9 @@ export const BudgetForm = () => {
         );
       }
     } else if (e.ctrlKey && e.code === "KeyQ") {
-      if (!locked && open && !modified) {
+      if (!locked && open && !formModified) {
         budgetClose();
-      } else if (!locked && open && modified) {
+      } else if (!locked && open && formModified) {
         console.log("salvar antes de sair?");
       }
     }
@@ -214,19 +336,30 @@ export const BudgetForm = () => {
     if (open) {
       toggleAnimationForm(open, () => {
         if (number) {
-          loadBudgetDataFromDB();
+          setStateLoader(true);
+          // from BD
+          import(`mockData/mockSingleBudget-${number}.json`).then((res) => {
+            dispatch(resultBudgetAction({
+              dataBudget: res.default
+            }));
+          });
         }
       });
-    }
+    };
 
     // unmount component
     return () => {
-      product();
-      customert();
-      // setStatusSelect("0");
-      setBudgetData({});
+      productListExists();
+      customerListExists();
+      setFormModified(false);
+    };
+  }, [open, number, dispatch]);
+
+  useEffect(() => {
+    if(Object.keys(dataBudget).length) {
+      populateForm();
     }
-  }, [open, number, toggleAnimationForm]);
+  }, [dataBudget]);
 
   return (
     open && (
@@ -248,26 +381,26 @@ export const BudgetForm = () => {
 
           {/* HEADER */}
           <HeaderForm 
-            bgColor={statusBackgroundColors(parseInt(budgetData.os_status))}
-            txtColor={statusTextColors(parseInt(budgetData.os_status))}
+            bgColor={statusBackgroundColors(parseInt(dataBudget.os_status))}
+            txtColor={statusTextColors(parseInt(dataBudget.os_status))}
           >
             <WaterIcon>
-              <Icon icon={statusIcons(parseInt(budgetData.os_status))} />
+              <Icon icon={statusIcons(parseInt(dataBudget.os_status))} />
             </WaterIcon>
 
             <LeftBlockInfo>
               <p className="customer-name">
                 {
-                  Object.keys(budgetData).length && budgetData.os_customer_data ? 
-                  budgetData.os_customer_data.cust_razao : '------'
+                  Object.keys(dataBudget).length && dataBudget.os_customer_data ? 
+                  dataBudget.os_customer_data.cust_razao : '------'
                 }
               </p>
               <p className="customer-contact">
                 Contato: {" "}
                 <b>
                   {
-                    Object.keys(budgetData).length && budgetData.os_att ? 
-                    budgetData.os_att : '------'
+                    Object.keys(dataBudget).length && dataBudget.os_att ? 
+                    dataBudget.os_att : '------'
                   }  
                 </b>
               </p>
@@ -275,8 +408,8 @@ export const BudgetForm = () => {
                 E-mail: {" "}
                 <b>
                   {
-                    Object.keys(budgetData).length && budgetData.os_customer_data ? 
-                    budgetData.os_customer_data.cust_email : '------'
+                    Object.keys(dataBudget).length && dataBudget.os_customer_data ? 
+                    dataBudget.os_customer_data.cust_email : '------'
                   }
                 </b>
               </p>
@@ -284,8 +417,8 @@ export const BudgetForm = () => {
                 Telefones: {" "}
                 <b>
                   {
-                    Object.keys(budgetData).length && budgetData.os_customer_data ? 
-                    `${budgetData.os_customer_data.cust_phone} / ${budgetData.os_customer_data.cust_cellphone}` : '------'
+                    Object.keys(dataBudget).length && dataBudget.os_customer_data ? 
+                    `${dataBudget.os_customer_data.cust_phone} / ${dataBudget.os_customer_data.cust_cellphone}` : '------'
                   }
                 </b>
               </p>
@@ -296,8 +429,8 @@ export const BudgetForm = () => {
                 OS Número:  {" "}
                 <b>
                   {
-                    Object.keys(budgetData).length && budgetData.os_number ? 
-                    budgetData.os_number : '------'
+                    Object.keys(dataBudget).length && dataBudget.os_number ? 
+                    dataBudget.os_number : '------'
                   }
                 </b>
               </p>
@@ -305,8 +438,8 @@ export const BudgetForm = () => {
                 Criado em: {" "} 
                 <b>
                   {
-                    Object.keys(budgetData).length && budgetData.os_emit ? 
-                    calendarDate(undefined, undefined, budgetData.os_emit, "L")  : '--/--/----'
+                    Object.keys(dataBudget).length && dataBudget.os_emit ? 
+                    calendarDate(undefined, undefined, dataBudget.os_emit, "L")  : '--/--/----'
                   }
                 </b>
               </p>
@@ -314,8 +447,8 @@ export const BudgetForm = () => {
                 Status: {" "}
                 <b>
                 {
-                  Object.keys(budgetData).length && budgetData.os_status ? 
-                  statusNames(parseInt(budgetData.os_status)) : 'Rascunho'
+                  Object.keys(dataBudget).length && dataBudget.os_status ? 
+                  statusNames(parseInt(dataBudget.os_status)) : 'Rascunho'
                 }
                 </b>
               </p>
@@ -323,8 +456,8 @@ export const BudgetForm = () => {
                 Total Bruto: {" "}
                 <b>
                   R$ {
-                  Object.keys(budgetData).length && budgetData.os_totalbruto ? 
-                  formatValue('toMoney', budgetData.os_totalbruto)  : '0,00'
+                  Object.keys(dataBudget).length && dataBudget.os_totalbruto ? 
+                  formatValue('toMoney', dataBudget.os_totalbruto)  : '0,00'
                 }
                 </b>
               </p>
@@ -332,7 +465,7 @@ export const BudgetForm = () => {
           </HeaderForm>
 
           {/* CONTENT */} 
-          <ContentForm className="scroll-style">
+          <ContentForm className="scroll-style"> 
             <FormBudget id="form-budget">
               <Grid fluid>
                 {/* LINE 1 - status, and dates */}
@@ -349,8 +482,8 @@ export const BudgetForm = () => {
                       onChange={(ev: any) => {
                         inputBudgetData({os_status: ev});
                       }}
-                      value={budgetData.os_status || "5"}
-                      disabledItemValues={budgetData.os_number ? ["5"] : ["0"]}
+                      value={dataBudget.os_status || "5"}
+                      disabledItemValues={dataBudget.os_number ? ["5"] : ["0"]}
                     />
                   </Col>
                   <Col xs={24} sm={24} md={8}>
@@ -360,7 +493,7 @@ export const BudgetForm = () => {
                       required
                       format="DD/MM/YYYY"
                       placeholder="DD/MM/YYYY"
-                      value={ budgetData.os_emit || dateNow}
+                      value={ dataBudget.os_emit || dateNow}
                       disabled
                     />
                   </Col>
@@ -371,7 +504,7 @@ export const BudgetForm = () => {
                       required
                       format="DD/MM/YYYY"
                       placeholder="DD/MM/YYYY"
-                      value={ budgetData.os_update || dateNow}
+                      value={ dataBudget.os_update || dateNow}
                       disabled
                     />
                   </Col>
@@ -391,13 +524,14 @@ export const BudgetForm = () => {
                           os_expire: calendarDate(undefined, undefined, val, "YYYY-MM-DD HH:mm:ss")
                         });
                       }}
-                      value={ budgetData.os_expire || null}
+                      value={ dataBudget.os_expire || null}
                       oneTap
                       cleanable={false}
                     />
                   </Col>
                   <Col xs={24} sm={24} md={8}>
                     <InputText 
+                      defaultValue=""
                       id="shippingTime"
                       label="Frete / Prazo" 
                       tip="( Ex: De 1 a 10 dias )" 
@@ -409,6 +543,7 @@ export const BudgetForm = () => {
                   </Col>
                   <Col xs={24} sm={24} md={8}>
                     <InputText 
+                      defaultValue="0,00"
                       id="shippingPrice"
                       label="Valor do Frete" 
                       tip="( R$ )" 
@@ -417,9 +552,23 @@ export const BudgetForm = () => {
                         inputMask("toMoney", "#shippingPrice");
                         inputBudgetData({
                           os_deliveryprice: formatValue("toMoney", `${ev}`, {toSave: true})
-                        }, true);
+                        }, true, true);
                       }}
                     />
+                    <div style={{width: '78%', height: 20, marginLeft: 5}}>
+                      <Checkbox 
+                        checked={dataBudget.os_deliverysum}
+                        onChange={(ev) => {
+                          inputBudgetData({
+                            os_deliverysum: !dataBudget.os_deliverysum || dataBudget.os_deliverysum === 0 ? 1 : 0
+                          }, false, true);
+                        }}
+                      >
+                      <small style={{ padding: 2}}>
+                        {" "}Somar Frete ao valor final?
+                      </small>
+                      </Checkbox>
+                    </div>
                   </Col>
                 </Row>
 
@@ -448,14 +597,29 @@ export const BudgetForm = () => {
                       <Row>
                         <Col xs={16} sm={16} md={16}>
                           <TableLineContainerInput>
-                            <ToolTip placement="bottom" trigger='hover' content={'Nome do Cliente aqui ...'}>
-                              <TableLineContent style={{ lineHeight: '20px' }}>Nome do Cliente aqui ...</TableLineContent>
-                            </ToolTip>
+                            <PopOver title="Cliente: " placement="bottom" trigger='hover' content={
+                                dataBudget.os_customer_data ?
+                                <small>
+                                  <p><b>Código: </b>{dataBudget.os_customer_data.cust_code}</p>
+                                  <p><b>Nome: </b>{dataBudget.os_customer_data.cust_razao}</p>
+                                  <p><b>E-mail: </b>{dataBudget.os_customer_data.cust_email}</p>
+                                  <p><b>CPF/CNPJ: </b>{dataBudget.os_customer_data.cust_cpfcnpj}</p>
+                                  <p><b>Telefone: </b>{dataBudget.os_customer_data.cust_phone}</p>
+                                  <p><b>Celular: </b>{dataBudget.os_customer_data.cust_cellphone}</p>
+                                </small>
+                                : "-------"
+                              }>
+                              <TableLineContent style={{ lineHeight: '20px' }}>
+                                {dataBudget.os_customer_data ? dataBudget.os_customer_data.cust_razao : "----"}
+                              </TableLineContent>
+                            </PopOver>
                           </TableLineContainerInput>
                         </Col>
                         <Col xs={5} sm={5} md={5}>
                           <TableLineContainerInput >
-                            <TableLineContent style={{ lineHeight: '20px' }}>00-0000-0000</TableLineContent>
+                            <TableLineContent style={{ lineHeight: '20px' }}>
+                            {dataBudget.os_customer_data ? dataBudget.os_customer_data.cust_phone : "----"}
+                            </TableLineContent>
                           </TableLineContainerInput>
                         </Col>
                         <Col xs={3} sm={3} md={3}>
@@ -474,7 +638,7 @@ export const BudgetForm = () => {
                               size="sm"
                               color="red"
                               style={{ marginLeft: '10px', position: 'relative', top: '3px' }}
-                              onClick={() => customert()}
+                              onClick={() => customerListExists()}
                             />
                           </ToolTip>
                         </Col>
@@ -492,7 +656,7 @@ export const BudgetForm = () => {
                         size="sm"
                         color="cyan"
                         appearance="primary"
-                        onClick={() => customert(true)}
+                        onClick={() => customerListExists(true)}
                       >
                         <Icon icon="group" /> Adicionar Cliente
                       </Button>
@@ -505,6 +669,7 @@ export const BudgetForm = () => {
                 <Row className="row-form">
                   <Col xs={24} sm={24} md={24}>
                     <InputText 
+                      defaultValue=""
                       id="customerContactName"
                       label="Nome do Contato / Cliente" 
                       tip="( Será visível na folha )" 
@@ -521,6 +686,7 @@ export const BudgetForm = () => {
                 <Row className="row-form">
                   <Col xs={24} sm={24} md={24}>
                     <InputText 
+                      defaultValue=""
                       id="feedbackNotes"
                       label="Feedback Interno" 
                       componentClass="textarea"
@@ -545,7 +711,9 @@ export const BudgetForm = () => {
                         <Icon icon="circle" className="input-icon-required" />{" "}
                         Lista de Produtos
                       </span>
-                      <small className="input-tips"> 1 íten(s) na lista</small>
+                      <small className="input-tips"> 
+                        {" "}( {dataBudget.os_prod_origin && dataBudget.os_prod_origin.length} íten(s) na lista )
+                      </small>
                       <div style={{ width: '96.9%', padding: 15, borderRadius: 6, border: '1px solid #e5e5ea', margin: '3px 0', position: 'relative' }}>
                         <Row>
                           <Col xs={3} sm={3} md={3}>
@@ -568,70 +736,95 @@ export const BudgetForm = () => {
                           </Col>
                         </Row>
                         <Row>
-                          <TableLineContainerTable>
-                            <Col xs={3} sm={3} md={3}>
-                              <TableLineContent>29787492</TableLineContent>
-                            </Col>
-                            <Col xs={6} sm={6} md={6}>
-                              <ToolTip placement="left" trigger='hover' content={'SERRA ELÉTRICA PARA GESSO, COM DISCO DE 2 E 2,5 POLEGADAS'}>
-                                <TableLineContent>SERRA ELÉTRICA PARA GESSO, COM DISCO DE 2 E 2,5 POLEGADAS</TableLineContent>
-                              </ToolTip>
-                            </Col>
-                            <Col xs={5} sm={5} md={5}>
-                              <TableLineContent>
-                                <Input
-                                  id={'prodID'}
-                                  // defaultValue={formatValue.toMoney('120.00')}
-                                  size="sm" placeholder="0,00"
-                                  style={{ width: 130 }}
-                                  onChange={(eValue) => {
-                                    inputMask("toMoney", '#prodID');
-                                    // calculateProduct(currencyFormat('#prodID', eValue, true));
-                                  }}
-                                />
-                              </TableLineContent>
-                            </Col>
-                            <Col xs={3} sm={3} md={3}>
-                              <TableLineContent>
-                                <Input
-                                  id={'prodQtId'}
-                                  size="sm"
-                                  defaultValue="1"
-                                  placeholder="0"
-                                  style={{ width: 60 }}
-                                  onChange={(ev) => {
-                                    inputMask("toNumber", '#prodQtId');
-                                    // calculateProduct(ev);
-                                  }}
-                                />
-                              </TableLineContent>
-                            </Col>
-                            <Col xs={4} sm={4} md={4}>
-                              <TableLineContent>
-                                R$ 00.000.000,00
-                                {/* <b>{formatValue.toMoney(12000)}</b> */}
-                              </TableLineContent>
-                            </Col>
+                          {/* Cell Product */}
+                          {
+                            dataBudget.os_prod_origin ? 
+                            dataBudget.os_prod_origin.map((item: any, indx: number) => {
+                              return (
+                              <TableLineContainerTable key={item.prod_code}>
+                                <Col xs={3} sm={3} md={3}>
+                                  <TableLineContent>
+                                    {item.prod_code}
+                                  </TableLineContent>
+                                </Col>
+                                <Col xs={6} sm={6} md={6}>
+                                  <PopOver title="Produto: " placement="bottom" trigger='hover' content={
+                                    <small>
+                                      <p><em><b>Código: </b>{item.prod_code}</em></p>
+                                      <p><em><b>Nome: </b>{item.prod_name}</em></p>
+                                      <p>
+                                        <em><b>Preço de Cadastro: </b>R$ {formatValue("toMoney", item.prod_price)}</em>
+                                      </p>
+                                    </small>
+                                  }>
+                                    <TableLineContent>
+                                      {item.prod_name}
+                                    </TableLineContent>
+                                  </PopOver>
+                                </Col>
+                                <Col xs={5} sm={5} md={5}>
+                                  <TableLineContent>
+                                    <Input
+                                      id={`prod-${item.id}`}
+                                      defaultValue={
+                                        formatValue("toMoney", dataBudget.os_products[indx].list_univalprod) || "0,00"
+                                      }
+                                      size="sm" placeholder="0,00"
+                                      style={{ width: 130 }}
+                                      onChange={() => {
+                                        inputMask("toMoney", `#prod-${item.id}`);
+                                        calculateProductQuantity(item.id);
+                                      }}
+                                    />
+                                  </TableLineContent>
+                                </Col>
+                                <Col xs={3} sm={3} md={3}>
+                                  <TableLineContent>
+                                    <Input
+                                      id={`quant-${item.id}`}
+                                      defaultValue={`${dataBudget.os_products[indx].list_quantprod}` || "0"}
+                                      size="sm"
+                                      placeholder="0"
+                                      style={{ width: 60 }}
+                                      onChange={() => {
+                                        inputMask("toNumber", `#quant-${item.id}`, item.id);
+                                        calculateProductQuantity(item.id);
+                                      }}
+                                    />
+                                  </TableLineContent>
+                                </Col>
+                                <Col xs={4} sm={4} md={4}>
+                                  <TableLineContent>
+                                    <b>
+                                      {`${formatValue("toMoney", dataBudget.os_products[indx].list_totalprod)}` || "0,00"}
+                                    </b>
+                                  </TableLineContent>
+                                </Col>
 
-                            <Col xs={3} sm={3} md={3}>
-                              <ToolTip placement="bottom" trigger='hover' content="Abrir dados do produto">
-                                <IconButton
-                                  icon={<Icon icon="folder-open" />}
-                                  circle size="xs"
-                                  style={{ position: 'relative', top: '3px' }}
-                                />
-                              </ToolTip>
-                              <ToolTip placement="bottom" trigger='hover' content="Remover produto do orçamento">
-                                <IconButton
-                                  icon={<Icon icon="minus" />}
-                                  circle size="xs"
-                                  color="red"
-                                  style={{ marginLeft: '10px', position: 'relative', top: '3px' }}
-                                  onClick={() => product()}
-                                />
-                              </ToolTip>
-                            </Col>
-                          </TableLineContainerTable>
+                                <Col xs={3} sm={3} md={3}>
+                                  <ToolTip placement="bottom" trigger='hover' content="Abrir dados do produto">
+                                    <IconButton
+                                      icon={<Icon icon="folder-open" />}
+                                      circle size="xs"
+                                      style={{ position: 'relative', top: '3px' }}
+                                    />
+                                  </ToolTip>
+                                  <ToolTip placement="bottom" trigger='hover' content="Remover produto do orçamento">
+                                    <IconButton
+                                      icon={<Icon icon="minus" />}
+                                      circle size="xs"
+                                      color="red"
+                                      style={{ marginLeft: '10px', position: 'relative', top: '3px' }}
+                                      onClick={() => productListExists()}
+                                    />
+                                  </ToolTip>
+                                </Col>
+                              </TableLineContainerTable>
+                              );
+                            })
+                            :
+                            "-------"
+                          }
                         </Row>
 
                         <Button
@@ -639,7 +832,7 @@ export const BudgetForm = () => {
                           color="cyan"
                           size="sm"
                           style={{ marginTop: 30 }}
-                          onClick={() => product(true)}
+                          onClick={() => productListExists(true)}
                         >
                           <Icon icon="barcode" /> Adicionar Produto à Lista
                         </Button>
@@ -651,7 +844,7 @@ export const BudgetForm = () => {
                           fontSize: '12px',
                           color: '#1EBCD2'
                         }}>
-                          <em>Valor Total em Produtos: <b>R$ 000.000.000,00</b></em>
+                          <em>Valor Total em Produtos: <b id="sumListProd">R$ 0,00</b> </em>
                         </p>
                       </div>
                     </div>
@@ -668,7 +861,7 @@ export const BudgetForm = () => {
                         size="sm"
                         appearance="primary"
                         color="cyan"
-                        onClick={() => product(true)}
+                        onClick={() => productListExists(true)}
                       >
                         <Icon icon="barcode" /> Adicionar Produto
                       </Button>
@@ -681,33 +874,36 @@ export const BudgetForm = () => {
                 <Row className="row-form">
                   <Col xs={24} sm={24} md={8}>
                     <InputText 
+                      defaultValue="0"
                       id="percentDiscount"
                       label="Descontos %" 
                       tip="( Pagamentos á vista )" 
                       placeholder="Porcentagem ..." 
                       onChange={(ev: any) => { 
-                        inputBudgetData({os_discount: ev}, true);
+                        inputBudgetData({os_discount: ev}, true, true);
                       }}
                     />
                   </Col>
                   <Col xs={24} sm={24} md={8}>
                     <InputText 
+                      defaultValue="0"
                       id="parcelTimes"
                       label="Parcelamento X" 
                       placeholder="Apenas números ..." 
                       onChange={(ev: any) => {
                         inputMask("toNumber", "#parcelTimes");
-                        inputBudgetData({os_parcel: ev}, true);
+                        inputBudgetData({os_parcel: ev}, true, true);
                       }}
                     />
                   </Col>
                   <Col xs={24} sm={24} md={8}>
                     <InputText 
+                      defaultValue="0"
                       id="percentTax"
                       label="Taxa Adicional %" 
                       placeholder="Porcentagem ..." 
-                      onChange={(ev: any) => { 
-                        inputBudgetData({os_jurosparcel: ev}, true);
+                      onChange={(ev: any) => {
+                        inputBudgetData({os_jurosparcel: ev}, true, true);
                       }}
                     />
                   </Col>
@@ -717,6 +913,7 @@ export const BudgetForm = () => {
                 <Row className="row-form">
                   <Col xs={24} sm={24} md={24}>
                     <InputText 
+                      defaultValue=""
                       id="paymentMode"
                       label="Modo de Pagamento Faturado" 
                       componentClass="textarea"
@@ -732,7 +929,7 @@ export const BudgetForm = () => {
                   <Col xs={24} sm={24} md={24}>
                       <div className="input-container">
                         <p style={{ width: '30%', textAlign: 'right', float: 'right', marginRight: 25 }}>
-                          <Button appearance="default" onClick={() => calculateBudget()}>
+                          <Button id="btnUpdateCalc" appearance="default" onClick={() => calculateBudget()}>
                             <Icon icon="usd" /> Atualizar Cálculo
                           </Button>
                         </p>
@@ -742,9 +939,9 @@ export const BudgetForm = () => {
                             <small>** O Desconto será aplicado sobre o valor, COM OU SEM A TAXA ADICIONAL!</small><br />
                             <small>*** Sempre Salve as Alterações Antes de Visualizar e Imprimir o Orçamento!</small><br /><br /><br />
                             {
-                              budgetData.os_user_name && 
+                              dataBudget.os_user_name && 
                               <small style={{ color: '#C04544', fontSize: '12px' }}>
-                                ( Orçamento emitido pelo usuário <b>"{budgetData.os_user_name}"</b> )
+                                ( Orçamento emitido pelo usuário <b>"{dataBudget.os_user_name}"</b> )
                               </small>
                             }
                             <br />
@@ -787,7 +984,7 @@ export const BudgetForm = () => {
                   id="newBudget"
                   color="cyan"
                   appearance="subtle"
-                  disabled={modified || number ? false : true}
+                  disabled={formModified || number ? false : true}
                   onClick={() => budgetNewForm()}
                 >
                   <Icon icon="pencil" /> Novo
@@ -805,7 +1002,7 @@ export const BudgetForm = () => {
                   color="green"
                   appearance="subtle"
                   onClick={() => budgetSave(true)}
-                  disabled={!modified ? true : false}
+                  disabled={formModified ? false : true}
                 >
                   <Icon icon="sign-out" /> Salvar e Sair
                 </Button>
@@ -816,7 +1013,7 @@ export const BudgetForm = () => {
                   color="green"
                   appearance="subtle"
                   onClick={() => budgetSave()}
-                  disabled={!modified ? true : false}
+                  disabled={formModified ? false : true}
                 >
                   <Icon icon="check-circle" /> Salvar
                 </Button>

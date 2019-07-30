@@ -129,7 +129,7 @@ export interface BudgetStore {
   data: {
     open: boolean;
     number: number | null;
-    modified: boolean;
+    dataBudget: any;
   };
 }
 export interface BudgetAction {
@@ -137,6 +137,15 @@ export interface BudgetAction {
   payload: {
     open?: boolean;
     number?: number;
-    modified?: boolean;
+    dataBudget?: any;
+    productQuantityUpdate?: any[];
+    osCustomer?: any[];
+    osProdOrigin?: any[];
+    totalCalculate?: {
+      totalGeneral: string;
+      totalDiscount: string;
+      totalParcel: string;
+      totalCommission: string;
+    };
   };
 }

@@ -1,18 +1,16 @@
 {
     "id": 34,
     "os_id_user": "2",
-    "os_user_name": "Nome do Vendedor(a)",
-    "os_number": "80013",
+    "os_user_name": "Eliana",
+    "os_number": "2862",
     "os_status": "3",
     "os_emit": "2017-09-03 12:03:41",
     "os_update": "2017-09-04 12:03:41",
     "os_expire": "2017-10-04 12:03:41",
-    "os_expirecheck": "1",
     "os_pagtoadd": null,
     "os_delivery": "01 a 2",
-    "os_deliverypricedef": "0.00",
     "os_deliveryprice": "45.00",
-    "os_deliveryhide": null,
+    "os_deliverysum": 1,
     "os_customer": "8",
     "os_customer_data": {
         "cust_code": "28530027",
@@ -23,32 +21,36 @@
         "cust_email": "medicaobalancas@medicaobalancas.com.br"
     },
     "os_att": "Samuel",
-    "os_attmail": null,
-    "os_messagemail": null,
     "os_feedback": "á enviar",
-    "os_notes": null,
     "os_products": [
         {
-            "list_idprod": "20",
-            "list_univalprod": "664.02",
-            "list_quantprod": 1,
-            "list_totalprod": "664.02"
-        },
-        {
             "list_idprod": "17",
-            "list_univalprod": "1.00",
-            "list_quantprod": 1,
-            "list_totalprod": "1.00"
+            "list_univalprod": "45.95",
+            "list_quantprod": 10,
+            "list_totalprod": "459.50"
         },
         {
-            "list_idprod": "18",
-            "list_univalprod": "2.00",
-            "list_quantprod": 1,
-            "list_totalprod": "2.00"
+            "list_idprod": "20",
+            "list_univalprod": "584.90",
+            "list_quantprod": 4,
+            "list_totalprod": "2339.60"
+        }
+    ],
+    "os_prod_origin": [
+        {
+            "id": "17",
+            "prod_code": "51458864",
+            "prod_name": "ALMOFADA",
+            "prod_price": "1.00"
+        },
+        {
+            "id": "20",
+            "prod_code": "41069618",
+            "prod_name": "Valvula de contra peso, para autoclave vertical .Produtos Medicos",
+            "prod_price": "664.02"
         }
     ],
     "os_commissiondef": "10",
-    "os_commissiondown": null,
     "os_faturado": null,
     "os_discount": "1",
     "os_parcel": "5",
@@ -57,21 +59,5 @@
     "os_totaldiscount": "1452.35",
     "os_totaljuros": null,
     "os_totalparcela": "293.40",
-    "os_totalcommission": "145.23",
-    "os_sendstatus": "draft",
-    "os_openurl": "a15fe45d5fa313e9e05763c64c6de9a9",
-    "os_prod_origin": [
-        {
-            "id": 17,
-            "prod_code": "51458864",
-            "prod_name": "ALMOFADA",
-            "prod_price": "1.00"
-        },
-        {
-            "id": 20,
-            "prod_code": "41069618",
-            "prod_name": "Valvula de contra peso, para autoclave vertical .Produtos Medicos",
-            "prod_price": "664.02"
-        }
-    ]
+    "os_totalcommission": "145.23"
 }
