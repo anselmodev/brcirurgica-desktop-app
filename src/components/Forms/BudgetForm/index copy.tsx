@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useCallback, } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { TweenMax } from "gsap/TweenMax";
 import { useDispatch, useSelector } from "react-redux";
 import * as _ from "lodash";
@@ -51,13 +51,12 @@ import {
 
 export const BudgetForm = () => {
   const dateNow = new Date();
-  const [formFilled, setFormFilled] = useState(false);
-  const [loader, setLoader] = useState(false);
+  const [stateLoader, setStateLoader] = useState(false); // preloader
   const [formModified, setFormModified] = useState(false);
   const [productsAndCustomer, setProductsAndCustomer] = useState({ customer: false, products: false });
   const { locked } = useSelector((state: any) => state.lockScreen.data);
   const { open, number, dataBudget } = useSelector((state: any) => state.budget.data);
-  const debounceFunction = useRef(_.debounce((funcAction: Function) => funcAction(), 300));
+  const debounceFunction = useRef(_.debounce((funcAction: Function) => funcAction(), 500));
   const dispatch = useDispatch();
 
   const toggleAnimationForm = (open: boolean, callback?: Function) => {
@@ -80,7 +79,7 @@ export const BudgetForm = () => {
               open: false
             })
           );
-          setLoader(false);
+          setStateLoader(false);
         }
       });
     }
@@ -111,7 +110,7 @@ export const BudgetForm = () => {
   const budgetSave = (confirmExit?: boolean) => {
     // se não existir número, gerar um número para o orçamento.
 
-    setLoader(true);
+    setStateLoader(true);
     if (confirmExit) {
       console.log("Confirmar, Salvar alterações e sair");
     } else {
@@ -130,124 +129,131 @@ export const BudgetForm = () => {
   const checkExpiredBudget = () => {
     console.log("Verificar e alertar orçamento expirado");
   };
-  const calculateTotalProductsPrice = (listProducts: any) => {
-    return new Promise((resolve) => {
-      if (listProducts && Object.keys(listProducts).length) {
-        resolve(
-          Object.keys(listProducts).map(
-            key => listProducts[key].list_totalprod
-          ).reduce((total, value) => {
-            return parseFloat((
-              Number(formatValue("toMoney", total, { toSave: true })) +
-              Number(formatValue("toMoney", value, { toSave: true }))
-            ).toString()).toFixed(2);;
-          })
-        );
-      }
-    });
-  };
   const calculateBudget = () => {
-    calculateTotalProductsPrice(dataBudget.os_products).then((result: any) => {
+    const getTotalProductsPrice = Number(calculateTotalProductsPrice(dataBudget.os_products));
+    const getPriceDelivery = Number(dataBudget.os_deliveryprice);
+    const getDiscountValue = Number(dataBudget.os_discount);
+    const getParcelsNumber = Number(dataBudget.os_parcel);
+    const getTaxValue = Number(dataBudget.os_jurosparcel);
+    const getShippingIsSum = dataBudget.os_deliverysum;
+    const getVendorCommission = dataBudget.os_commissiondef;
 
-      const getTotalProductsPrice = result ? Number(result) : 0;
-      const getPriceDelivery = Number(dataBudget.os_deliveryprice);
-      const getDiscountValue = Number(dataBudget.os_discount);
-      const getParcelsNumber = Number(dataBudget.os_parcel);
-      const getTaxValue = Number(dataBudget.os_jurosparcel);
-      const getShippingIsSum = dataBudget.os_deliverysum;
-      const getVendorCommission = Number(dataBudget.os_commissiondef);
+    let fullResult: number;
+    let withDicountResult: number;
+    let withTaxResult: number;
+    let parcelPrice: number;
+    let commissionVendor: number;
 
-      // com taxa de juros;
-      let withTaxResult = getTaxValue ? ((getTotalProductsPrice / 100) * getTaxValue) + getTotalProductsPrice : getTotalProductsPrice;
+  // from these variables:
+    // calculate total with discount
+    if(getShippingIsSum) {
+      withDicountResult = (getTotalProductsPrice / 100) * getDiscountValue;
+    }
 
-      // descontar sobre o valor (com ou sem taxa)
-      let withDicountResult = getDiscountValue ? withTaxResult - ((withTaxResult / 100) * getDiscountValue) : withTaxResult;
+    // calculate tax price from total
+    if(getShippingIsSum) {
+      withTaxResult = (getTotalProductsPrice / 100) * getTaxValue;
+    }
 
-      // somar frete sobre o valor (com ou sem desconto)
-      let withShippingResult = getShippingIsSum ? withDicountResult + getPriceDelivery : withDicountResult;
+    // calculate parcel price from total
+    if(getShippingIsSum) {
+      parcelPrice = (getTotalProductsPrice / getParcelsNumber);
+    }
 
-      // valor da parcela
-      let parcelPrice = getParcelsNumber ? withShippingResult / getParcelsNumber : 0;
+    // calculate commission price from total general or from total with discount "os_commissiondef"
+    if(getShippingIsSum) {
+      commissionVendor = (getTotalProductsPrice / 100) * getVendorCommission;
+    }
 
-      // valor da comissão
-      let commissionVendor = getVendorCommission ? (withDicountResult / 100) * getVendorCommission : 0;
+    // calculate totals with shipping
+    if(getShippingIsSum) {
+    }
 
-      // SHOW RESULTS ON BUDGET
-      const resultCalc = {
-        os_totalbruto: parseFloat(getTotalProductsPrice.toString()).toFixed(2),
-        os_totaljuros: parseFloat(withTaxResult.toString()).toFixed(2),
-        os_totaldiscount: parseFloat(withDicountResult.toString()).toFixed(2),
-        os_with_shipping: parseFloat(withShippingResult.toString()).toFixed(2),
-        os_totalparcela: parseFloat(parcelPrice.toString()).toFixed(2),
-        os_totalcommission: parseFloat(commissionVendor.toString()).toFixed(2)
-      };
+    // SHOW RESULTS ON BUDGET
+
+    console.log('DATA: ', {
+      totalProducts: getTotalProductsPrice,
+      totalALL: getPriceDelivery,
+      getDiscountValue,
+      getParcelsNumber,
+      getTaxValue,
+      sumShipping: getShippingIsSum
+    });
+
+    // console.log('RESULTS: ', {
+    //   fullResult : fullResult && parseFloat(
+    //     fullResult.toString()
+    //   ).toFixed(2)
+    // });
+
+
+    // dispatch(resultBudgetAction({
+    //   totalCalculate: {
+    //     totalGeneral: getTotalProductsPrice,
+    //     totalDiscount: getDiscountValue,
+    //     totalParcel: getParcelsNumber,
+    //     totalCommission: ""
+    //   }
+    // }));
+
+  };
+  const calculateTotalProductsPrice = (listProducts: any) => {
+    if (listProducts && Object.keys(listProducts).length) {
+      return Object.keys(listProducts).map(
+        key => listProducts[key].list_totalprod
+      ).reduce((total, value) => {
+        return parseFloat((
+          Number(formatValue("toMoney", total, { toSave: true })) +
+          Number(formatValue("toMoney", value, { toSave: true }))
+        ).toString()).toFixed(2);;
+      });
+    }
+  };
+  const calculateProductQuantity = (idProdList: string | number) => {
+    debounceFunction.current(() => {
+      setFormModified(true);
+
+      const priceProduct = (document.getElementById(`prod-${idProdList}`) as HTMLInputElement).value;
+      const quantityProduct = (document.getElementById(`quant-${idProdList}`) as HTMLInputElement).value;
+
+      // calculate price from quantity
+      const calculateTotal = parseFloat(
+        (Number(formatValue("toMoney", priceProduct, { toSave: true })) * Number(quantityProduct)).toString()
+      ).toFixed(2);
+
+      // find index product from "os_products"
+      let findIndexProduct = _.findIndex(dataBudget.os_products, { 'list_idprod': `${idProdList}` });
+
+      //update product data
+      const productUpdated = [
+        parseInt(findIndexProduct),
+        {
+          list_idprod: `${idProdList}`,
+          list_univalprod: `${formatValue("toMoney", priceProduct, { toSave: true })}`,
+          list_quantprod: Number(quantityProduct),
+          list_totalprod: calculateTotal
+        }
+      ];
 
       dispatch(resultBudgetAction({
-        dataBudget: {
-          ...resultCalc
-        }
+        productQuantityUpdate: productUpdated
       }));
-
 
       // update total list values
       (document.getElementById("sumListProd") as any).textContent =
-        `R$  ${formatValue("toMoney", result)}` || "0,00";
+        `R$  ${formatValue("toMoney", calculateTotalProductsPrice(dataBudget.os_products))}` || "0,00";
 
+      // updateCalc
+      (document.getElementById("btnUpdateCalc") as HTMLInputElement).click();
     });
-  };
-  const calculateProductQuantity = (idProdList: string | number) => {
-    if (dataBudget.os_products) {
-
-      debounceFunction.current(() => {
-        setFormModified(true);
-
-        const getPriceProduct = (document.getElementById(`prod-${idProdList}`) as any).value;
-        const getQuantityProduct = (document.getElementById(`quant-${idProdList}`) as any).value;
-        const priceProduct = formatValue("toMoney", getPriceProduct, { toSave: true });
-
-        // calculate price from quantity
-        const calculateTotal = parseFloat(
-          (Number(priceProduct) * Number(getQuantityProduct)).toString()
-        ).toFixed(2);
-
-        // find index product from "os_products"
-        let findIndexProduct = _.findIndex(dataBudget.os_products, { 'list_idprod': `${idProdList}` });
-
-        //update product data
-        const productUpdated = [
-          parseInt(findIndexProduct),
-          {
-            list_idprod: `${idProdList}`,
-            list_univalprod: priceProduct,
-            list_quantprod: Number(getQuantityProduct),
-            list_totalprod: calculateTotal
-          }
-        ];
-
-        dispatch(resultBudgetAction({
-          productQuantityUpdate: productUpdated
-        }));
-
-        setTimeout(() => {
-          calculateTotalProductsPrice(dataBudget.os_products).then((result: any) => {
-            // updateCalc
-            (document.getElementById("btnUpdateCalc") as any).click();
-          });
-        }, 200);
-
-      });
-
-    }
   };
   const inputBudgetData = (keyData: object, debounce?: boolean, updateCalc?: boolean) => {
     function updCalc() {
-      if (dataBudget.os_products) {
-        setTimeout(() => {
-          if (updateCalc) {
-            (document.getElementById("btnUpdateCalc") as any).click();
-          }
-        }, 0);
-      }
+      setTimeout(() => {
+        if (updateCalc) {
+          (document.getElementById("btnUpdateCalc") as HTMLInputElement).click();
+        }
+      }, 0);
     };
 
     if (debounce) {
@@ -297,17 +303,15 @@ export const BudgetForm = () => {
       if (dataBudget.os_products) {
         setProductsAndCustomer((oldState: any) => ({ ...oldState, products: true }));
         setTimeout(() => {
-          calculateTotalProductsPrice(dataBudget.os_products).then((result: any) => {
-            (document.getElementById("sumListProd") as any).textContent =
-              `R$  ${formatValue("toMoney", result)}` || "0,00";
-          });
-
+          (document.getElementById("sumListProd") as any).textContent =
+            `R$  ${formatValue("toMoney", calculateTotalProductsPrice(dataBudget.os_products))}` || "0,00";
         }, 500);
       }
 
-      setLoader(false);
+      setStateLoader(false);
     }
   };
+
   const addRemoveCustomer = (type: 'add' | 'update' | 'remove') => {
     if (type === "add") {
       // open search and search customer
@@ -374,7 +378,7 @@ export const BudgetForm = () => {
     if (open) {
       toggleAnimationForm(open, () => {
         if (number) {
-          setLoader(true);
+          setStateLoader(true);
           // from BD
           import(`mockData/mockSingleBudget-${number}.json`).then((res) => {
             dispatch(resultBudgetAction({
@@ -383,20 +387,21 @@ export const BudgetForm = () => {
           });
         }
       });
-    } else {
+    };
+
+    // unmount component
+    return () => {
       productListExists();
       customerListExists();
       setFormModified(false);
-      setFormFilled(false);
-    }
+    };
   }, [open, number, dispatch]);
 
   useEffect(() => {
-    if (Object.keys(dataBudget).length && !formFilled) {
+    if (Object.keys(dataBudget).length) {
       populateForm();
-      setFormFilled(true);
     }
-  }, [dataBudget, formFilled]);
+  }, [dataBudget]);
 
   return (
     open && (
@@ -410,7 +415,7 @@ export const BudgetForm = () => {
           </ToolTip>
 
           {/* Preloader */}
-          {loader && (
+          {stateLoader && (
             <Preloader>
               <Loader size="md" className="loader-budget" />
             </Preloader>
@@ -489,102 +494,15 @@ export const BudgetForm = () => {
                   }
                 </b>
               </p>
-              <PopOver title="DETALHES DO CÁLCULO GERAL: " placement="left" trigger='hover' content={
-                <ul style={{ margin: 0, padding: 0, paddingLeft: 20, paddingTop: 5 }}>
-                  <li style={{ color: '#333', textDecoration: (dataBudget.os_totalbruto === "0" ? 'line-through' : 'inherit') }}>
-                    <em>
-                      Total em produtos:{" "}
-                      <b>
-                        R$ {
-                          Object.keys(dataBudget).length && dataBudget.os_totalbruto !== "0" ?
-                            formatValue('toMoney', dataBudget.os_totalbruto) : '0,00'
-                        }
-                      </b>
-                    </em>
-                  </li>
-                  <li style={{ color: '#333', textDecoration: (dataBudget.os_jurosparcel === "0" ? 'line-through' : 'inherit') }}>
-                    <em>
-                      Total com taxa (juros):{" "}
-                      <b>
-                        R$ {
-                          Object.keys(dataBudget).length && dataBudget.os_jurosparcel !== "0" ?
-                            formatValue('toMoney', dataBudget.os_totaljuros) : '0,00'
-                        }
-                      </b>
-                    </em>
-                  </li>
-                  <li style={{ color: '#333', textDecoration: (dataBudget.os_discount === "0" ? 'line-through' : 'inherit') }}>
-                    <em>
-                      Total com desconto aplicado:{" "}
-                      <b>
-                        R$ {
-                          Object.keys(dataBudget).length && dataBudget.os_discount !== "0" ?
-                            formatValue('toMoney', dataBudget.os_totaldiscount) : '0,00'
-                        }
-                      </b>
-                    </em>
-                  </li>
-                  <li style={{ color: '#333', textDecoration: (!dataBudget.os_deliverysum ? 'line-through' : 'inherit') }}>
-                    <em>
-                      Total com frete incluso:{" "}
-                      <b>
-                        R$ {
-                          Object.keys(dataBudget).length && dataBudget.os_deliverysum ?
-                            formatValue('toMoney', dataBudget.os_with_shipping) : '0,00'
-                        }
-                      </b>
-                    </em>
-                  </li>
-                  <li style={{ color: '#333', textDecoration: (dataBudget.os_parcel === "0" ? 'line-through' : 'inherit') }}>
-                    <em>
-                      Valor das parcelas:{" "}
-                      <b>
-                        R$ {
-                          Object.keys(dataBudget).length && dataBudget.os_parcel !== "0" ?
-                            formatValue('toMoney', dataBudget.os_totalparcela) : '0,00'
-                        }
-                      </b>
-                    </em>
-                  </li>
-                  <li style={{ color: '#333', textDecoration: (dataBudget.os_totalcommission === "0" ? 'line-through' : 'inherit') }}>
-                    <em>
-                      Valor da Comissão:{" "}
-                      <b>
-                        R$ {
-                          Object.keys(dataBudget).length && dataBudget.os_totalcommission !== "0" ?
-                            formatValue('toMoney', dataBudget.os_totalcommission) : '0,00'
-                        }
-                      </b>
-                    </em>
-                  </li>
-                </ul>
-              }>
-                <p className="os-value">
-                  <Icon icon="info" /> {" "}
-                  TOTAL: {" "}
-                  <b>
-                    R$ {
-                      Object.keys(dataBudget).length && dataBudget.os_totalbruto !== "0" ?
-                        formatValue('toMoney', dataBudget.os_totalbruto) : '0,00'
-                    }
-                  </b>
-                  {
-                    dataBudget.os_deliverysum &&
-                    <>
-                      <br />
-                      <span style={{ fontSize: 11, paddingLeft: 20 }}>
-                        <em>
-                          Com frete: R$ {
-                            Object.keys(dataBudget).length && dataBudget.os_deliverysum ?
-                              formatValue('toMoney', dataBudget.os_with_shipping) : '0,00'
-                          }
-                        </em>
-                      </span>
-                    </>
+              <p className="os-value">
+                Total Bruto: {" "}
+                <b>
+                  R$ {
+                    Object.keys(dataBudget).length && dataBudget.os_totalbruto ?
+                      formatValue('toMoney', dataBudget.os_totalbruto) : '0,00'
                   }
-
-                </p>
-              </PopOver>
+                </b>
+              </p>
             </RightBlockInfo>
           </HeaderForm>
 
@@ -835,10 +753,10 @@ export const BudgetForm = () => {
                           <span className="input-title">
                             <Icon icon="circle" className="input-icon-required" />{" "}
                             Lista de Produtos
-                          </span>
+                      </span>
                           <small className="input-tips">
                             {" "}( {dataBudget.os_prod_origin && dataBudget.os_prod_origin.length} íten(s) na lista )
-                          </small>
+                      </small>
                           <div style={{ width: '96.9%', padding: 15, borderRadius: 6, border: '1px solid #e5e5ea', margin: '3px 0', position: 'relative' }}>
                             <Row>
                               <Col xs={3} sm={3} md={3}>
@@ -879,21 +797,6 @@ export const BudgetForm = () => {
                                               <p><em><b>Nome: </b>{item.prod_name}</em></p>
                                               <p>
                                                 <em><b>Preço de Cadastro: </b>R$ {formatValue("toMoney", item.prod_price)}</em>
-                                              </p>
-                                              <p>
-                                                <Button
-                                                  appearance="primary"
-                                                  color="cyan"
-                                                  size="xs"
-                                                  block
-                                                  onClick={() => console.log('atualizar: ', {
-                                                    name: item.prod_name,
-                                                    value: item.prod_price
-                                                  })}
-                                                >
-                                                  <Icon icon="reload" />
-                                                  {" "} Atualizar produto com as informações do cadastro
-                                                </Button>
                                               </p>
                                             </small>
                                           }>
@@ -1019,15 +922,10 @@ export const BudgetForm = () => {
                       label="Descontos %"
                       tip="( Pagamentos á vista )"
                       placeholder="Porcentagem ..."
-                      onChange={(value: string) => {
+                      onChange={(ev: any) => {
                         inputBudgetData({
-                          os_discount: value !== "" ? value : "0"
+                          os_discount: ev
                         }, true, true);
-                      }}
-                      onBlur={({currentTarget}: any) => {
-                        (document.getElementById("percentDiscount") as any).value = (
-                          currentTarget.value !== "" ? currentTarget.value : "0"
-                        )
                       }}
                     />
                   </Col>
@@ -1037,30 +935,20 @@ export const BudgetForm = () => {
                       id="parcelTimes"
                       label="Parcelamento X"
                       placeholder="Apenas números ..."
-                      onChange={(value: string) => {
+                      onChange={(ev: any) => {
                         inputMask("toNumber", "#parcelTimes");
-                        inputBudgetData({ os_parcel: value !== "" ? value : "0" }, true, true);
-                      }}
-                      onBlur={({currentTarget}: any) => {
-                        (document.getElementById("parcelTimes") as any).value = (
-                          currentTarget.value !== "" ? currentTarget.value : "0"
-                        )
+                        inputBudgetData({ os_parcel: ev }, true, true);
                       }}
                     />
                   </Col>
                   <Col xs={24} sm={24} md={8}>
                     <InputText
-                      defaultValue={0}
+                      defaultValue="0"
                       id="percentTax"
                       label="Taxa Adicional ( juros ) %"
                       placeholder="Porcentagem ..."
-                      onChange={(value: string) => {
-                        inputBudgetData({ os_jurosparcel: value !== "" ? value : "0" }, true, true);
-                      }}
-                      onBlur={({currentTarget}: any) => {
-                        (document.getElementById("percentTax") as any).value = (
-                          currentTarget.value !== "" ? currentTarget.value : "0"
-                        )
+                      onChange={(ev: any) => {
+                        inputBudgetData({ os_jurosparcel: ev }, true, true);
                       }}
                     />
                   </Col>
@@ -1078,7 +966,7 @@ export const BudgetForm = () => {
                       placeholder="Digite ..."
                       style={{ width: "97%", height: 100 }}
                       onChange={(ev: any) => {
-                        inputBudgetData({ os_faturado: ev }, true);// modified form
+                        inputBudgetData({ os_faturado: ev }, true);
                       }}
                     />
                     <br />

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Input, Icon } from "rsuite";
 import { InputContainer } from "./styles";
 
@@ -17,6 +17,7 @@ interface InputProps {
   value?: any;
   style?: any;
   componentClass?: any
+  onBlur?: any
 }
 
 export const InputText = ({
@@ -33,9 +34,11 @@ export const InputText = ({
   size,
   type,
   value,
-  style
+  style,
+  onBlur
 }: InputProps) => {
-  return (
+
+  const MemoInputText = useMemo(() =>
     <InputContainer>
       <span className="input-title">
         {required && <Icon icon="circle" className="input-icon-required" />}{" "}
@@ -54,6 +57,7 @@ export const InputText = ({
         onChange={onChange}
         placeholder={placeholder}
         style={style}
+        onBlur={onBlur}
       />
       {errorMessage && (
         <div className="input-error-msg">
@@ -61,6 +65,23 @@ export const InputText = ({
           {errorMessage}
         </div>
       )}
-    </InputContainer>
-  );
+    </InputContainer>, [
+      id,
+      label,
+      tip,
+      errorMessage,
+      required,
+      placeholder,
+      defaultValue,
+      componentClass,
+      disabled,
+      onChange,
+      size,
+      type,
+      value,
+      style,
+      onBlur
+    ]);
+
+  return MemoInputText
 };

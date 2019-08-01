@@ -133,6 +133,7 @@ export const RightBlockInfo = styled.div`
   .os-value {
     margin: 10px 0;
     font-size: 16px;
+    cursor: pointer;
   }
 `;
 

@@ -50,6 +50,7 @@
     "react-svg": "^10.0.2",
     "redux": "^4.0.1",
     "redux-thunk": "^2.3.0",
+    "reselect": "^4.0.0",
     "rsuite": "^3.8.4",
     "styled-components": "^4.2.0",
     "typescript": "3.5.3",

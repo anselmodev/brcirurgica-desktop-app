@@ -50,7 +50,7 @@ export function reducerBudgetForm(state = budgetState, action: BudgetAction) {
             }
           }
         };
-      } 
+      }
       // update quantity and price product
       else if (action.payload.productQuantityUpdate) {
         const updateProducts = [...state.data.dataBudget.os_products];
@@ -67,14 +67,14 @@ export function reducerBudgetForm(state = budgetState, action: BudgetAction) {
             }
           }
         };
-      } 
+      }
       // add or remove customer data
       else if (action.payload.osCustomer) {
-      } 
+      }
       // add or remove products from budget
       else if (action.payload.osProdOrigin) {
       }
-      // Result calc: 
+      // Result calc:
       // total-general, total-discount, tax-price, parcel-price, total commission
       else if (action.payload.totalCalculate) {
       }

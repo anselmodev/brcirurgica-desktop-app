@@ -26,13 +26,13 @@
         {
             "list_idprod": "17",
             "list_univalprod": "45.95",
-            "list_quantprod": 10,
+            "list_quantprod": "10",
             "list_totalprod": "459.50"
         },
         {
             "list_idprod": "20",
             "list_univalprod": "584.90",
-            "list_quantprod": 4,
+            "list_quantprod": "4",
             "list_totalprod": "2339.60"
         }
     ],
@@ -54,10 +54,11 @@
     "os_faturado": null,
     "os_discount": "1",
     "os_parcel": "5",
-    "os_jurosparcel": null,
-    "os_totalbruto": "1467.02",
-    "os_totaldiscount": "1452.35",
-    "os_totaljuros": null,
-    "os_totalparcela": "293.40",
-    "os_totalcommission": "145.23"
+    "os_jurosparcel": "0",
+    "os_totalbruto": "2799.10",
+    "os_totaldiscount": "2771.11",
+    "os_totaljuros": "0",
+    "os_totalparcela": "563.22",
+    "os_with_shipping": "2816.11",
+    "os_totalcommission": "277.11"
 }
