@@ -30,7 +30,7 @@
     "@types/redux-logger": "^3.0.7",
     "@types/styled-components": "^4.1.16",
     "@types/vanilla-masker": "^1.2.0",
-    "bcrypt": "^3.0.6",
+    "bcrypt": "^5.0.0",
     "concurrently": "^4.1.0",
     "crypto-js": "^3.1.9-1",
     "drivelist": "^8.0.6",
