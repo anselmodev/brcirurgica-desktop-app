@@ -58,7 +58,7 @@
   },
   "devDependencies": {
     "concurrently": "^4.1.0",
-    "electron": "^5.0.1",
+    "electron": "^11.5.0",
     "electron-builder": "^20.40.2",
     "electron-devtools-installer": "^2.2.4",
     "redux-logger": "^3.0.6",
